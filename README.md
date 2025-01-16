@@ -1,19 +1,21 @@
 An Angular app built using the Angular CLI.
 
 1. Clone the repository.
-2. Create a `.env` file by copying `.env.sample` and filling in the values.
-3. Install dependencies:
 
-   npm install
+2. Copy `.env.sample` to `.env` and configure the environment variables.
 
-Install necessary dependencies (dotenv for environment variables).
+3. Install dependencies with `npm install`.
 
-Create a structured file system (components, services, models, etc.).
+4. Install dotenv for managing environment variables.
 
-Configure environment variables in .env and .env.sample.
+5. Create a structured file system (components, services, models, etc.).
 
-Set up .gitignore to ignore unnecessary files.
+6. Set up `.gitignore` to avoid pushing unnecessary files.
 
-Use semantic HTML tags in templates (<header>, <main>, <footer>).
+7. Use semantic HTML tags like <header>, <main>, and <footer> in your templates.
 
-Write the start page with a greeting.
+8. Write a start page with a greeting.
+
+9. Run your Angular app using `ng serve`.
+
+This guide will help you set up your Angular app and ensure it's structured well, with all necessary configurations in place!
