@@ -54,3 +54,45 @@ Adds libraries or packages to your project `ng add`.
 Updates Angular and dependencies to the latest version `ng update`.
 
 This guide will help you set up your Angular app and ensure it's structured well, with all necessary configurations in place!
+
+Before running the application in `Docker`, ensure you have the following installed on your machine:
+
+- Docker (latest version)
+- Docker Compose (optional, for multi-container setups)
+
+# Build the Docker image
+You can build the Docker image with the following command:
+
+`docker-compose build`
+
+This command will use the Dockerfile in the project to create a Docker image that contains your Angular application.
+
+# Run the Docker container
+Once the image is built, you can start the container by running:
+
+`docker-compose up`
+
+This will start the container in the foreground. The application will be available at http://localhost:4200.
+
+If you prefer to run the container in detached mode (in the background), use the -d flag:
+
+`docker-compose up -d`
+
+# Access the Application
+Once the container is running, you can access the application by navigating to:
+
+http://localhost:4200
+
+The Angular development server will be running inside the Docker container, and the application will be live.
+
+# Stopping the Application
+To stop the Docker container, use the following command:
+
+`docker-compose down`
+
+This will stop and remove the container, networks, and volumes associated with the application.
+
+# .dockerignore
+
+The `.dockerignore` file specifies which files and directories should be excluded from the Docker image during the build process. This helps reduce the image size and speeds up the build by avoiding unnecessary files.
+
