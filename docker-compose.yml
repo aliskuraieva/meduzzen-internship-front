@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     image: meduzzen-internship-front-app
@@ -11,6 +9,4 @@ services:
     ports:
       - "4200:4200"
     restart: always
-    command: npm run start
-    environment:
-      - NODE_ENV=development
+
