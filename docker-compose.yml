@@ -1,0 +1,12 @@
+services:
+  app:
+    image: meduzzen-internship-front-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "4200:4200"
+    restart: always
+
