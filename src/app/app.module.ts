@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { ListUsersComponent } from './pages/list-users/list-users.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { CompanyProfileComponent } from './pages/company-profile/company-profile.component';
+import { ListCompaniesComponent } from './pages/list-companies/list-companies.component';
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterModule,
+@NgModule({
+  declarations: [
+    AppComponent,
     ListUsersComponent,
     UserProfileComponent,
-    CompanyProfileComponent
+    CompanyProfileComponent,
+    ListCompaniesComponent,
   ],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  imports: [
+    CommonModule,
+    RouterModule,
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppComponent {}
+export class AppModule {}

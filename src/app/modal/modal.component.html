@@ -1,0 +1,11 @@
+<div *ngIf="isVisible" class="modal-overlay" (click)="close()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ modalTitle }}</h2>
+      <button (click)="close()">X</button>
+    </div>
+    <div class="modal-body">
+      <p>{{ modalContent }}</p>
+    </div>
+  </div>
+</div>
