@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-company-list',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './company-list.component.html',
-  styleUrl: './company-list.component.scss'
+  styleUrls: ['./company-list.component.scss']
 })
 export class CompanyListComponent {
 

@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-authorization',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './user-authorization.component.html',
-  styleUrl: './user-authorization.component.scss'
+  styleUrls: ['./user-authorization.component.scss']
 })
 export class UserAuthorizationComponent {
 

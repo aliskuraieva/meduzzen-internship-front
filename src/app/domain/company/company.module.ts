@@ -5,13 +5,11 @@ import { CompanyListComponent } from './components/company-list/company-list.com
 import { CompanyProfileComponent } from './components/company-profile/company-profile.component';
 
 @NgModule({
-  declarations: [
-    CompanyListComponent,
-    CompanyProfileComponent
-  ],
   imports: [
     CommonModule,
-    CompanyRoutingModule
-  ]
+    CompanyRoutingModule,
+    CompanyListComponent,
+    CompanyProfileComponent,
+  ],
 })
 export class CompanyModule {}

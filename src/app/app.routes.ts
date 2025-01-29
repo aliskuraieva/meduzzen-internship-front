@@ -1,20 +1,19 @@
 import { Routes } from '@angular/router';
-
-import { AboutComponent } from './pages/about/about.component';
-import { UserRegistrationComponent } from './pages/user-registration/user-registration.component';
-import { UserAuthorizationComponent } from './pages/user-authorization/user-authorization.component';
-import { ListUsersComponent } from './pages/list-users/list-users.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
-import { ListCompaniesComponent } from './pages/list-companies/list-companies.component';
-import { CompanyProfileComponent } from './pages/company-profile/company-profile.component';
+import { AboutComponent } from './domain/about/about.component';
+import { UserProfileComponent } from './domain/user/components/user-profile/user-profile.component';
+import { UserListComponent } from './domain/user/components/user-list/user-list.component';
+import { CompanyProfileComponent } from './domain/company/components/company-profile/company-profile.component';
 
 export const appRoutes: Routes = [
-  { path: '', component: AboutComponent },
+  { path: '', redirectTo: '/about', pathMatch: 'full' },
   { path: 'about', component: AboutComponent },
-  { path: 'register', component: UserRegistrationComponent },
-  { path: 'login', component: UserAuthorizationComponent },
-  { path: 'users', component: ListUsersComponent },
-  { path: 'user/:id', component: UserProfileComponent },
-  { path: 'companies', component: ListCompaniesComponent },
-  { path: 'company/:id', component: CompanyProfileComponent }
+
+  { path: 'companies', loadChildren: () => import('./domain/company/company-routing.module').then(m => m.CompanyRoutingModule) },
+  { path: 'users', loadChildren: () => import('./domain/user/user-routing.module').then(m => m.UserRoutingModule) },
+
+  { path: 'profile', component: UserProfileComponent },
+  { path: 'users-list', component: UserListComponent },
+  { path: 'company-profile', component: CompanyProfileComponent },
+
+  { path: '**', redirectTo: '/about' }
 ];

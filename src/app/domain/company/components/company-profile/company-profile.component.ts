@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-company-profile',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './company-profile.component.html',
-  styleUrl: './company-profile.component.scss'
+  styleUrls: ['./company-profile.component.scss']
 })
 export class CompanyProfileComponent {
 

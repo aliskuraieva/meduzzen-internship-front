@@ -1,20 +1,7 @@
-import { ListUsersComponent } from './pages/list-users/list-users.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
-import { CompanyProfileComponent } from './pages/company-profile/company-profile.component';
-import { ListCompaniesComponent } from './pages/list-companies/list-companies.component';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ListUsersComponent,
-    UserProfileComponent,
-    CompanyProfileComponent,
-    ListCompaniesComponent,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-  ],
-  bootstrap: [AppComponent],
+  imports: [CommonModule],
 })
 export class AppModule {}

@@ -1,19 +1,23 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ListUsersComponent } from './pages/list-users/list-users.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
-import { CompanyProfileComponent } from './pages/company-profile/company-profile.component';
+import { ModalComponent } from './shared/modal/modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterModule,
-    ListUsersComponent,
-    UserProfileComponent,
-    CompanyProfileComponent
-  ],
+  imports: [CommonModule, RouterModule, ModalComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {}
+export class AppComponent {
+  isModalVisible: boolean = false;
+
+  toggleModal() {
+    this.isModalVisible = !this.isModalVisible;
+  }
+
+  closeModal() {
+    this.isModalVisible = false;
+  }
+}
