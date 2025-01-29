@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-user-authorization',
+  imports: [],
   templateUrl: './user-authorization.component.html',
-  styleUrls: ['./user-authorization.component.scss'],
+  styleUrl: './user-authorization.component.scss'
 })
-export class UserAuthorizationComponent {}
+export class UserAuthorizationComponent {
+
+}

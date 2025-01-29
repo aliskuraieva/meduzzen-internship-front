@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AboutComponent } from './pages/about/about.component';
-import { UserRegistrationComponent } from './pages/user-registration/user-registration.component';
 
 const routes: Routes = [
-  { path: '', component: AboutComponent },
-  { path: 'about', component: AboutComponent },
-  { path: 'register', component: UserRegistrationComponent },
+  { path: 'about', loadChildren: () => import('./domain/about/about.module').then(m => m.AboutModule) },
+  { path: 'user', loadChildren: () => import('./domain/user/user.module').then(m => m.UserModule) },
+  { path: 'company', loadChildren: () => import('./domain/company/company.module').then(m => m.CompanyModule) },
+  { path: '', redirectTo: 'about', pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}
