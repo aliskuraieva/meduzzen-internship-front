@@ -1,12 +1,23 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ModalComponent } from './shared/modal/modal.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [CommonModule, RouterModule, ModalComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'meduzzen-internship-front';
+  isModalVisible: boolean = false;
+
+  toggleModal() {
+    this.isModalVisible = !this.isModalVisible;
+  }
+
+  closeModal() {
+    this.isModalVisible = false;
+  }
 }
