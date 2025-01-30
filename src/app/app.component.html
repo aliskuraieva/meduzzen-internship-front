@@ -1,17 +1,25 @@
 <div class="container">
   <h1>Hello!</h1>
-<nav>
-  <ul>
-    <li><a routerLink="/about">About</a></li>
-    <li><a routerLink="/users/register">Register User</a></li>
-    <li><a routerLink="/users/login">Login</a></li>
-    <li><a routerLink="/users/list">User List</a></li>
-    <li><a routerLink="/companies">Companies</a></li>
-  </ul>
-</nav>
-<router-outlet></router-outlet>
-<app-modal [isVisible]="isModalVisible" (close)="closeModal()">
-  <h2>Modal Title</h2>
-  <p>This is an example modal window.</p>
-</app-modal>
+
+  <nav aria-label="Main navigation">
+    <ul>
+      <li><a routerLink="/about" routerLinkActive="active">About</a></li>
+      <li><a routerLink="/users/register" routerLinkActive="active">Register User</a></li>
+      <li><a routerLink="/users/login" routerLinkActive="active">Login</a></li>
+      <li><a routerLink="/users/list" routerLinkActive="active">User List</a></li>
+      <li><a routerLink="/companies" routerLinkActive="active">Companies</a></li>
+    </ul>
+  </nav>
+
+  <router-outlet></router-outlet>
+
+  <div class="test-string">
+    <p>Test String: {{ testString$ | async }}</p>
+    <button (click)="changeTestString()">Change String</button>
+  </div>
+
+  <app-modal [isVisible]="isModalVisible" (close)="closeModal()">
+    <h2>Modal Title</h2>
+    <p>This is an example modal window.</p>
+  </app-modal>
 </div>
