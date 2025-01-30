@@ -1,7 +1,13 @@
+// app.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ModalComponent } from './shared/modal/modal.component';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { changeTestString } from './state/app.actions';
+import { selectTestString } from './state/app.selectors';
+import { AppState } from './state/app.state';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +18,11 @@ import { ModalComponent } from './shared/modal/modal.component';
 })
 export class AppComponent {
   isModalVisible: boolean = false;
+  testString$: Observable<string>;
+
+  constructor(private store: Store<AppState>) {
+    this.testString$ = this.store.select(selectTestString);
+  }
 
   toggleModal() {
     this.isModalVisible = !this.isModalVisible;
@@ -19,5 +30,9 @@ export class AppComponent {
 
   closeModal() {
     this.isModalVisible = false;
+  }
+
+  changeTestString() {
+    this.store.dispatch(changeTestString({ newValue: 'New Test String' }));
   }
 }
