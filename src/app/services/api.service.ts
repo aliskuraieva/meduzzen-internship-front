@@ -9,6 +9,6 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   checkHealth(): Observable<any> {
-    return this.http.get('/api/health');
+    return this.http.get('http://localhost:3000/api/health');
   }
 }
