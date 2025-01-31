@@ -5,9 +5,9 @@ import { RouterModule } from '@angular/router';
 import { ModalComponent } from './shared/modal/modal.component';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { changeTestString } from './state/app.actions';
-import { selectTestString } from './state/app.selectors';
-import { AppState } from './state/app.state';
+import { changeTestString } from './core/state/app.actions';
+import { selectTestString } from './core/state/app.selectors';
+import { AppState } from './core/state/app.state';
 
 @Component({
   selector: 'app-root',
