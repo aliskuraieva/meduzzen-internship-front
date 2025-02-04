@@ -11,8 +11,8 @@ export const initialState: AppState = {
 
 export const appReducer = createReducer(
   initialState,
-  on(changeTestString, (state, { newValue }) => ({
+  on(changeTestString, (state, { newTestString }) => ({
     ...state,
-    testString: newValue,
+    testString: newTestString,
   }))
 );

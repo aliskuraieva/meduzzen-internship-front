@@ -1,10 +1,12 @@
-.env
-
 # Compiled output
 /dist
 /tmp
 /out-tsc
 /bazel-out
+
+# Angular environment files
+src/environments/environment.ts
+src/environments/environment.prod.ts
 
 # Node
 /node_modules

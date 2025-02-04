@@ -9,14 +9,17 @@ import { ApiService } from '../../services/api.service';
   template: `<p>Health Check Status: {{ status | json }}</p>`,
 })
 export class HealthStatusComponent implements OnInit {
-  status: any = 'Checking...';
+  status: string = 'Checking...';
 
   constructor(private apiService: ApiService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.apiService.checkHealth().subscribe({
-      next: (res) => (this.status = res),
-      error: () => (this.status = 'API is down'),
+      next: (res: string) => (this.status = res),
+      error: (err) => {
+        console.error('Health check failed:', err);
+        this.status = 'API is down';
+      },
     });
   }
 }
