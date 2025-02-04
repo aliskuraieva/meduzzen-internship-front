@@ -12,6 +12,6 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   checkHealth(): Observable<string> {
-    return this.http.get<string>(`${this.apiUrl}`);
+    return this.http.get<string>(`${this.apiUrl}/api`);
   }
 }
