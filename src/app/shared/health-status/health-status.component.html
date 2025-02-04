@@ -1,0 +1,8 @@
+<div *ngIf="healthStatus">
+  <h2>Health Check Status:</h2>
+  <pre>{{ healthStatus | json }}</pre>
+</div>
+
+<div *ngIf="!healthStatus">
+  <p>Loading health status...</p>
+</div>

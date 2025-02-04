@@ -1,10 +1,11 @@
-.env
-
 # Compiled output
 /dist
 /tmp
 /out-tsc
 /bazel-out
+
+.env
+
 
 # Node
 /node_modules
@@ -40,3 +41,4 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.vercel
