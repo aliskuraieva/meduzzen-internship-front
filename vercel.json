@@ -1,12 +1,16 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "dist/meduzzen-internship-front/**/*",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["**"]
+      }
     }
   ],
-  "env": {
-    "NPM_CONFIG_PREFIX": "/vercel/.npm"
-  },
-  "buildCommand": "npm install && ng build --configuration production"
+  "scripts": {
+    "build": "npm run build",
+    "start": "npm run start"
+  }
 }

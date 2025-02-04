@@ -9,12 +9,13 @@ import { changeTestString } from './core/state/app.actions';
 import { selectTestString } from './core/state/app.selectors';
 import { AppState } from './core/state/app.state';
 import { environment } from '../environments/environment';
+
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterModule, ModalComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   isModalVisible = false;
