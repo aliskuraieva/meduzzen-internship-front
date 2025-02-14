@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ApiService } from '../../../../services/api.service';
 
 @Component({
   selector: 'app-company-list',
@@ -8,6 +9,26 @@ import { CommonModule } from '@angular/common';
   templateUrl: './company-list.component.html',
   styleUrls: ['./company-list.component.scss']
 })
-export class CompanyListComponent {
+export class CompanyListComponent implements OnInit {
+  companies: any[] = [];
 
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit(): void {
+    this.fetchCompanies();
+  }
+
+  fetchCompanies(): void {
+    this.apiService.getAllCompanies().subscribe({
+      next: (companiesData) => {
+        this.companies = companiesData;
+      },
+      error: (error) => {
+        console.error('Error fetching companies data:', error);
+      },
+      complete: () => {
+        console.log('Request complete');
+      }
+    });
+  }
 }

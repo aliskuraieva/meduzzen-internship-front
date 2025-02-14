@@ -11,7 +11,33 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  checkHealth(): Observable<string> {
-    return this.http.get<string>(`${this.apiUrl}`);
+  // Companies API
+  getCompanyById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/companies/${id}`);
+  }
+
+  getAllCompanies(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/companies`);
+  }
+
+  // Users API
+  getUserById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/${id}`);
+  }
+
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users`);
+  }
+
+  registerUser(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, { email, password });
+  }
+
+  loginUser(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/login`, { email, password });
+  }
+
+  checkHealth(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/health-check`);
   }
 }

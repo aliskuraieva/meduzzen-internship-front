@@ -1,1 +1,20 @@
-<p>company-profile works!</p>
+<div class="company-profile">
+  <div *ngIf="company; else loading">
+    <h2>{{ company.name }}</h2>
+    <p>{{ company.description }}</p>
+
+    <div *ngIf="company.createdAt">
+      <p><strong>Created On:</strong> {{ formatDate(company.createdAt) }}</p>
+    </div>
+
+    <div *ngIf="company.updatedAt">
+      <p><strong>Last Updated:</strong> {{ formatDate(company.updatedAt) }}</p>
+    </div>
+
+    <button (click)="editCompanyProfile()">Edit Profile</button>
+  </div>
+
+  <ng-template #loading>
+    <p>Loading company profile...</p>
+  </ng-template>
+</div>

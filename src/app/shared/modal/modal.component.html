@@ -1,1 +1,14 @@
-<p>modal works!</p>
+<div *ngIf="isVisible" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Modal Title</h2>
+      <button class="close-btn" (click)="closeModal()">X</button>
+    </div>
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+    <div class="modal-footer">
+      <button (click)="closeModal()">Close</button>
+    </div>
+  </div>
+</div>

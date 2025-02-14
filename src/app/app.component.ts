@@ -23,7 +23,6 @@ export class AppComponent {
   readonly apiUrl = environment.apiUrl;
   constructor(private store: Store<AppState>) {
     this.testString$ = this.store.select(selectTestString);
-    console.log('Backend API URL:', this.apiUrl);
   }
 
   toggleModal(): void {
