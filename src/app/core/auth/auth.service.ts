@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, switchMap, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { User } from '../interfaces/user.interface';
 import { Auth0AuthService } from './auth0-auth.service';
 import { UserRegistrationService } from '../../domain/user/components/user-registration/user-registration.service';
@@ -10,10 +11,12 @@ import { UserRegistrationService } from '../../domain/user/components/user-regis
 })
 export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
+  private refreshTokenInProgress = false;
 
   constructor(
     private auth0AuthService: Auth0AuthService,
-    private userRegistrationService: UserRegistrationService
+    private userRegistrationService: UserRegistrationService,
+    private http: HttpClient
   ) {
     this.loadUserData();
   }
@@ -24,6 +27,9 @@ export class AuthService {
 
   logout(): void {
     this.auth0AuthService.logout();
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    this.userSubject.next(null);
   }
 
   getUser(): Observable<User | null> {
@@ -35,26 +41,75 @@ export class AuthService {
   }
 
   private loadUserData(): void {
-    this.auth0AuthService.getAccessToken().pipe(
-      switchMap(token => {
-        if (token) {
-          localStorage.setItem('access_token', token);
+    const token = this.token;
+    if (token) {
+      this.validateToken(token).pipe(
+        switchMap(isValid => {
+          if (isValid) {
+            return this.auth0AuthService.getUser();
+          } else {
+            return this.refreshToken().pipe(
+              switchMap(newToken => {
+                if (newToken) {
+                  localStorage.setItem('access_token', newToken);
+                  return this.auth0AuthService.getUser();
+                } else {
+                  throw new Error('Token refresh failed');
+                }
+              })
+            );
+          }
+        }),
+        catchError(error => {
+          console.error('Error loading user data', error);
+          this.logout();
+          return [];
+        })
+      ).subscribe(user => {
+        if (user) {
+          const userData: User = {
+            name: user.name || '',
+            email: user.email || '',
+          };
+          this.userSubject.next(userData);
         }
-        return this.auth0AuthService.getUser();
+      });
+    }
+  }
+
+  private validateToken(token: string): Observable<boolean> {
+    return this.http.get('/api/auth/validate-token', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
+
+  private refreshToken(): Observable<string | null> {
+    if (this.refreshTokenInProgress) {
+      return of(null);
+    }
+
+    this.refreshTokenInProgress = true;
+
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      this.refreshTokenInProgress = false;
+      return of(null);
+    }
+
+    return this.http.post<{ access_token: string }>('/api/auth/refresh-token', { refresh_token: refreshToken }).pipe(
+      map(response => response.access_token),
+      catchError(() => {
+        this.refreshTokenInProgress = false;
+        return of(null);
       }),
-      catchError(error => {
-        console.error('Error loading user data', error);
-        return [];
+      switchMap(newToken => {
+        this.refreshTokenInProgress = false;
+        return of(newToken);
       })
-    ).subscribe(user => {
-      if (user) {
-        const userData: User = {
-          name: user.name || '',
-          email: user.email || '',
-        };
-        this.userSubject.next(userData);
-      }
-    });
+    );
   }
 
   get token(): string | null {

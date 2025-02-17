@@ -11,7 +11,6 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Companies API
   getCompanyById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/companies/${id}`);
   }
@@ -20,7 +19,6 @@ export class ApiService {
     return this.http.get<any[]>(`${this.apiUrl}/companies`);
   }
 
-  // Users API
   getUserById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users/${id}`);
   }

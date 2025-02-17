@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl, A
 import { AuthService } from '../../../../core/auth/auth.service';
 import { RegisterResponse } from '../../../../core/interfaces/register-response.interface';
 import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../core/constants/regex.constants';
-import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 
 @Component({
@@ -20,7 +19,6 @@ export class UserRegistrationComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private toastr: ToastrService,
     private router: Router
   ) {
     this.registrationForm = this.fb.group(
@@ -45,11 +43,11 @@ export class UserRegistrationComponent {
 
       this.authService.registerUser(email, password).subscribe({
         next: (response: RegisterResponse) => {
-          this.toastr.success('User successfully registered', 'Success');
+          alert('User successfully registered');
           this.router.navigate(['/login']);
         },
         error: (error: any) => {
-          this.toastr.error(`Registration failed: ${error.message || 'Something went wrong'}`, 'Error');
+          alert(`Registration failed: ${error.message || 'Something went wrong'}`);
         }
       });
     }
