@@ -28,14 +28,14 @@ export class ApiService {
   }
 
   registerUser(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/register`, { email, password });
+    return this.http.post<any>(`${this.apiUrl}/register`, { email, password });
   }
 
   loginUser(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/login`, { email, password });
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password });
   }
 
   checkHealth(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/health-check`);
+    return this.http.get<any>(`${this.apiUrl}`);
   }
 }
