@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiUrl: process.env['NG_APP_API_URL'],
   auth0: {
     domain: process.env['AUTH0_DOMAIN'],
