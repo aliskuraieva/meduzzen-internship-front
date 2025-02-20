@@ -13,11 +13,11 @@ export const appConfig: ApplicationConfig = {
     provideStore({ testString: appReducer }),
     provideHttpClient(),
     provideAuth0({
-      domain: window.__env__?.['NG_APP_PUBLIC_AUTH0_DOMAIN'] || '',
-      clientId: window.__env__?.['NG_APP_PUBLIC_AUTH0_CLIENT_ID'] || '',
+      domain: import.meta.env['NG_APP_PUBLIC_AUTH0_DOMAIN'],
+      clientId: import.meta.env['NG_APP_PUBLIC_AUTH0_CLIENT_ID'],
       authorizationParams: {
         redirect_uri: window.location.origin,
-        audience: window.__env__?.['NG_APP_PUBLIC_AUTH0_AUDIENCE'] || '',
+        audience: import.meta.env['NG_APP_PUBLIC_AUTH0_AUDIENCE'],
         scope: 'openid profile email',
       },
     }),
