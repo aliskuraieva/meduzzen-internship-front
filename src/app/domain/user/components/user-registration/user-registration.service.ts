@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RegisterResponse } from '../../../../core/interfaces/register-response.interface';
-import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserRegistrationService {
-  private registerUrl = `${environment.apiUrl}/register`;
+  private registerUrl = `${import.meta.env['NG_APP_PUBLIC_API_URL']}/register`;
 
   constructor(private http: HttpClient) {}
 

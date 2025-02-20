@@ -6,7 +6,6 @@ import { provideStore } from '@ngrx/store';
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/core/routes/app.routes';
 import { appReducer } from './app/core/state/app.reducer';
-import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -14,11 +13,11 @@ bootstrapApplication(AppComponent, {
     provideStore({ testString: appReducer }),
     provideHttpClient(),
     provideAuth0({
-      domain: environment.auth0.domain,
-      clientId: environment.auth0.clientId,
+      domain: import.meta.env['NG_APP_PUBLIC_AUTH0_DOMAIN'],
+      clientId: import.meta.env['NG_APP_PUBLIC_AUTH0_CLIENT_ID'],
       authorizationParams: {
         redirect_uri: window.location.origin,
-        audience: environment.auth0.audience,
+        audience: import.meta.env['NG_APP_PUBLIC_AUTH0_AUDIENCE'],
         scope: 'openid profile email',
       },
     }),

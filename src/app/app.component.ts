@@ -8,7 +8,6 @@ import { ModalComponent } from './shared/modal/modal.component';
 import { changeTestString } from './core/state/app.actions';
 import { selectTestString } from './core/state/app.selectors';
 import { AppState } from './core/state/app.state';
-import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +19,7 @@ import { environment } from '../environments/environment';
 export class AppComponent {
   isModalVisible = false;
   readonly testString$: Observable<string>;
-  readonly apiUrl = environment.apiUrl;
+  readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'];
   constructor(private store: Store<AppState>) {
     this.testString$ = this.store.select(selectTestString);
   }
