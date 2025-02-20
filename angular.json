@@ -19,7 +19,8 @@
           "options": {
             "ngxEnv": {
               "prefix": "NG_APP_",
-              "runtime": true
+              "runtime": true,
+              "envFile": ".env"
             },
             "outputPath": "dist/meduzzen-internship-front",
             "index": "src/index.html",
