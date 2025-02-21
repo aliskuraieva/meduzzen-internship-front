@@ -14,7 +14,7 @@ export class HealthStatusComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    console.log(import.meta.env['NG_APP_PUBLIC_API_URL'])
+    console.log(import.meta.env['NG_APP_PUBLIC_API_URL']);
     this.apiService.checkHealth().subscribe({
       next: (res: string) => (this.status = res),
       error: (err) => {
