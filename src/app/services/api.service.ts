@@ -36,6 +36,6 @@ export class ApiService {
   }
 
   checkHealth(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/health`);
+    return this.http.get<any>(`${this.apiUrl}`);
   }
 }
