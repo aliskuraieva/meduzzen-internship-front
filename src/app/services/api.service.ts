@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly apiUrl = import.meta.env['NG_APP_API_URL'];
+  private readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'];
 
   constructor(private http: HttpClient) {}
 
