@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, JsonPipe } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-health-status',
   standalone: true,
-  imports: [CommonModule, JsonPipe],
+  imports: [CommonModule],
   template: `<p>Health Check Status: {{ status | json }}</p>`,
 })
 export class HealthStatusComponent implements OnInit {
