@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UsersResponse } from '../core/interfaces/user.interface';
 
 
 @Injectable({
@@ -23,8 +24,12 @@ export class ApiService {
     return this.http.get<any>(`${this.apiUrl}/users/${id}`);
   }
 
-  getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/users`);
+  getCurrentUser(): Observable<{ username: string, email: string }> {
+    return this.http.get<{ username: string, email: string }>(`${this.apiUrl}/users/me`);
+  }
+
+  getAllUsers(): Observable<UsersResponse> {
+    return this.http.get<UsersResponse>(`${this.apiUrl}/users`);
   }
 
   registerUser(email: string, password: string): Observable<any> {

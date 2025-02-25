@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../services/api.service';
+import { User } from '../../../../core/interfaces/user.interface';
+import { UsersResponse } from '../../../../core/interfaces/user.interface';
 
 @Component({
   selector: 'app-user-list',
@@ -11,7 +13,7 @@ import { ApiService } from '../../../../services/api.service';
 })
 export class UserListComponent implements OnInit {
 
-  users: any[] = [];
+  users: User[] = [];
 
   constructor(private apiService: ApiService) {}
 
@@ -21,8 +23,9 @@ export class UserListComponent implements OnInit {
 
   fetchUsers(): void {
     this.apiService.getAllUsers().subscribe({
-      next: (usersData) => {
-        this.users = usersData;
+      next: (response: UsersResponse) => {
+        this.users = response.detail.users;
+        console.log('this.users', this.users);
       },
       error: (error) => {
         console.error('Error fetching users data:', error);
@@ -32,4 +35,5 @@ export class UserListComponent implements OnInit {
       }
     });
   }
+
 }

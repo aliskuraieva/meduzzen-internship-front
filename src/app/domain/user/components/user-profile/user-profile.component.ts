@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../../../services/api.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -9,20 +11,42 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit {
+  user: { username: string, email: string } = { username: '', email: '' };
 
-  user: { name: string, email: string } = { name: '', email: '' };
-
-  constructor() { }
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService,
+  ) {}
 
   ngOnInit(): void {
-    this.user = {
-      name: '',
-      email: ''
-    };
+    this.route.paramMap.subscribe(params => {
+      const userId = params.get('id');
+
+      if (userId) {
+        this.apiService.getUserById(userId).subscribe({
+          next: (userData) => {
+            console.log('User data received:', userData);
+            this.user = userData.detail;
+          },
+          error: (error) => {
+            console.error('Error fetching user data:', error);
+          }
+        });
+      } else {
+        this.apiService.getCurrentUser().subscribe({
+          next: (userData) => {
+            console.log('Current user data:', userData);
+            this.user = userData;
+          },
+          error: (error) => {
+            console.error('Error fetching current user data:', error);
+          }
+        });
+      }
+    });
   }
 
   editProfile(): void {
-
     console.log('Editing profile for:', this.user);
   }
 }

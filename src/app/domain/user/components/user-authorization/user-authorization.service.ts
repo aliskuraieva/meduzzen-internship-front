@@ -6,13 +6,13 @@ import { RegisterResponse } from '../../../../core/interfaces/register-response.
 @Injectable({
   providedIn: 'root'
 })
-export class UserRegistrationService {
-  private registerUrl = `${import.meta.env['NG_APP_PUBLIC_API_URL']}/auth/register`;
+export class UserAuthorizationService {
+  private authorizationUrl = `${import.meta.env['NG_APP_PUBLIC_API_URL']}/auth/login`;
 
   constructor(private http: HttpClient) {}
 
-  registerUser(email: string, password: string): Observable<RegisterResponse> {
+  authorizationUser(email: string, password: string): Observable<any> {
     const body = { email, password };
-    return this.http.post<RegisterResponse>(this.registerUrl, body);
+    return this.http.post<any>(this.authorizationUrl, body);
   }
 }

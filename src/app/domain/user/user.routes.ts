@@ -8,5 +8,6 @@ export const userRoutes: Routes = [
   { path: 'register', component: UserRegistrationComponent },
   { path: 'login', component: UserAuthorizationComponent },
   { path: 'list', component: UserListComponent },
+  { path: 'profile', component: UserProfileComponent },
   { path: 'profile/:id', component: UserProfileComponent }
 ];
