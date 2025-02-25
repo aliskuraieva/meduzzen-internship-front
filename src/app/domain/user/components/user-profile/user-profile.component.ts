@@ -12,6 +12,7 @@ import { ApiService } from '../../../../services/api.service';
 })
 export class UserProfileComponent implements OnInit {
   user: { username: string, email: string } = { username: '', email: '' };
+  isEditing: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,6 +48,17 @@ export class UserProfileComponent implements OnInit {
   }
 
   editProfile(): void {
+    this.isEditing = true;
     console.log('Editing profile for:', this.user);
+  }
+
+  saveProfile(): void {
+
+    console.log('Profile saved:', this.user);
+    this.isEditing = false;
+  }
+
+  cancelEdit(): void {
+    this.isEditing = false;
   }
 }

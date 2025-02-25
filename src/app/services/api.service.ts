@@ -25,7 +25,7 @@ export class ApiService {
   }
 
   getCurrentUser(): Observable<{ username: string, email: string }> {
-    return this.http.get<{ username: string, email: string }>(`${this.apiUrl}/users/me`);
+    return this.http.get<{ username: string, email: string }>(`${this.apiUrl}/auth/me`);
   }
 
   getAllUsers(): Observable<UsersResponse> {
