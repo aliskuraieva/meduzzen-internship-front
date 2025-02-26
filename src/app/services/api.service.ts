@@ -24,9 +24,11 @@ export class ApiService {
     return this.http.get<any>(`${this.apiUrl}/users/${id}`);
   }
 
-  getCurrentUser(): Observable<{ username: string, email: string }> {
-    return this.http.get<{ username: string, email: string }>(`${this.apiUrl}/auth/me`);
+  getCurrentUser(): Observable<{ username: string; email: string }> {
+    const headers = { Authorization: `Bearer ${localStorage.getItem('access_token')}` };
+    return this.http.get<{ username: string; email: string }>(`${this.apiUrl}/auth/me`, { headers });
   }
+
 
   getAllUsers(): Observable<UsersResponse> {
     return this.http.get<UsersResponse>(`${this.apiUrl}/users`);

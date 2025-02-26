@@ -6,8 +6,14 @@ export interface User {
   updatedAt: string;
 }
 
+export interface Auth0User {
+  sub?: string;
+  email?: string;
+  nickname?: string;
+}
+
 export interface UserData {
-  id?: number;
+  id?: string | number;
   username: string;
   email: string;
 }

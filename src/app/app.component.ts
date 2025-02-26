@@ -9,7 +9,7 @@ import { changeTestString } from './core/state/app.actions';
 import { selectTestString } from './core/state/app.selectors';
 import { AppState } from './core/state/app.state';
 import { AuthService } from './core/auth/auth.service';
-import { User, UserData } from './core/interfaces/user.interface';
+import { UserData, Auth0User } from './core/interfaces/user.interface';
 
 @Component({
   selector: 'app-root',
@@ -30,15 +30,36 @@ export class AppComponent {
 
     this.authService.getUser().subscribe((user) => {
       if (user) {
-        this.currentUser = user;
-        console.log('User from AuthService:', user);
-
-        if ('id' in user) {
-          this.userProfileLink = `/users/profile/${(user as User).id}`;
-          console.log('Generated userProfileLink:', this.userProfileLink);
-        }
+        this.setUser(user, 'AuthService');
       }
     });
+  }
+
+  private setUser(user: UserData | Auth0User, source: string): void {
+    if (this.isAuth0User(user)) {
+      this.currentUser = this.mapAuth0UserToUserData(user);
+    } else {
+      this.currentUser = user;
+    }
+
+    console.log(`User from ${source}:`, this.currentUser);
+
+    if (this.currentUser?.id) {
+      this.userProfileLink = `/users/profile/${this.currentUser.id}`;
+      console.log('Generated userProfileLink:', this.userProfileLink);
+    }
+  }
+
+  private isAuth0User(user: any): user is Auth0User {
+    return 'sub' in user || 'email' in user || 'nickname' in user;
+  }
+
+  private mapAuth0UserToUserData(auth0User: Auth0User): UserData {
+    return {
+      id: auth0User.sub ?? '',
+      email: auth0User.email ?? '',
+      username: auth0User.nickname ?? auth0User.email ?? 'Unknown',
+    };
   }
 
   toggleModal(): void {

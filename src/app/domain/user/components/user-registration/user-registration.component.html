@@ -38,6 +38,11 @@
       <small>Passwords do not match</small>
     </div>
 
-    <button type="submit" [disabled]="registrationForm.invalid">Register</button>
+    <button type="submit" [disabled]="registrationForm.invalid" class="primary">
+      Register
+    </button>
+
+    <button type="button" (click)="registerWithAuth0()">Register with Auth0</button>
+
   </form>
 </div>

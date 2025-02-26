@@ -52,4 +52,9 @@ export class UserRegistrationComponent {
       });
     }
   }
+
+  registerWithAuth0() {
+    this.authService.registerWithAuth0();
+  }
+
 }

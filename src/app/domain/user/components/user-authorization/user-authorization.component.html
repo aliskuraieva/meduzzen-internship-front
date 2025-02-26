@@ -25,6 +25,11 @@
       <small>Password does not meet the required pattern</small>
     </div>
 
-    <button type="submit" [disabled]="authorizationForm.invalid">Login</button>
+    <button type="submit" [disabled]="authorizationForm.invalid" class="primary">
+      Login
+    </button>
+
+    <button type="button" (click)="loginWithAuth0()">Login with Auth0</button>
+
   </form>
 </div>

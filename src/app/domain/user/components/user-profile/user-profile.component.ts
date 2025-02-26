@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../services/api.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-profile',
@@ -11,40 +12,35 @@ import { ApiService } from '../../../../services/api.service';
   styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit {
-  user: { username: string, email: string } = { username: '', email: '' };
-  isEditing: boolean = false;
+  user: { username: string; email: string } = { username: '', email: '' };
+  isEditing = false;
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const userId = params.get('id');
-
-      if (userId) {
-        this.apiService.getUserById(userId).subscribe({
-          next: (userData) => {
-            console.log('User data received:', userData);
-            this.user = userData.detail;
-          },
-          error: (error) => {
-            console.error('Error fetching user data:', error);
+    this.route.paramMap
+      .pipe(
+        switchMap(params => {
+          const userId = params.get('id');
+          return userId ? this.apiService.getUserById(userId) : this.apiService.getCurrentUser();
+        })
+      )
+      .subscribe({
+        next: (userData) => {
+          if (!userData || !userData.username || !userData.email) {
+            console.error('Invalid user data:', userData);
+            return;
           }
-        });
-      } else {
-        this.apiService.getCurrentUser().subscribe({
-          next: (userData) => {
-            console.log('Current user data:', userData);
-            this.user = userData;
-          },
-          error: (error) => {
-            console.error('Error fetching current user data:', error);
-          }
-        });
-      }
-    });
+          console.log('User data received:', userData);
+          this.user = userData;
+        },
+        error: (error) => {
+          console.error('Error fetching user data:', error);
+        }
+      });
   }
 
   editProfile(): void {
@@ -53,7 +49,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   saveProfile(): void {
-
     console.log('Profile saved:', this.user);
     this.isEditing = false;
   }
