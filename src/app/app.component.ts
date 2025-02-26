@@ -9,7 +9,7 @@ import { changeTestString } from './core/state/app.actions';
 import { selectTestString } from './core/state/app.selectors';
 import { AppState } from './core/state/app.state';
 import { AuthService } from './core/auth/auth.service';
-import { UserData, Auth0User } from './core/interfaces/user.interface';
+import { UserData } from './core/interfaces/user.interface';
 
 @Component({
   selector: 'app-root',
@@ -21,12 +21,14 @@ import { UserData, Auth0User } from './core/interfaces/user.interface';
 export class AppComponent {
   isModalVisible = false;
   readonly testString$: Observable<string>;
+  readonly isAuthenticated$: Observable<boolean>;
   readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'] ?? '';
   userProfileLink = '/users/profile';
   currentUser: UserData | null = null;
 
   constructor(private store: Store<AppState>, private authService: AuthService) {
     this.testString$ = this.store.select(selectTestString);
+    this.isAuthenticated$ = this.authService.isAuthenticated$;
 
     this.authService.getUser().subscribe((user) => {
       if (user) {
@@ -35,31 +37,14 @@ export class AppComponent {
     });
   }
 
-  private setUser(user: UserData | Auth0User, source: string): void {
-    if (this.isAuth0User(user)) {
-      this.currentUser = this.mapAuth0UserToUserData(user);
-    } else {
-      this.currentUser = user;
-    }
-
+  private setUser(user: UserData, source: string): void {
+    this.currentUser = user;
     console.log(`User from ${source}:`, this.currentUser);
 
     if (this.currentUser?.id) {
       this.userProfileLink = `/users/profile/${this.currentUser.id}`;
       console.log('Generated userProfileLink:', this.userProfileLink);
     }
-  }
-
-  private isAuth0User(user: any): user is Auth0User {
-    return 'sub' in user || 'email' in user || 'nickname' in user;
-  }
-
-  private mapAuth0UserToUserData(auth0User: Auth0User): UserData {
-    return {
-      id: auth0User.sub ?? '',
-      email: auth0User.email ?? '',
-      username: auth0User.nickname ?? auth0User.email ?? 'Unknown',
-    };
   }
 
   toggleModal(): void {

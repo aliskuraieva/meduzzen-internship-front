@@ -1,14 +1,29 @@
 <div class="container">
+
   <nav aria-label="Main navigation">
     <ul>
       <li><a routerLink="/about" routerLinkActive="active">About</a></li>
-      <li><a routerLink="/users/register" routerLinkActive="active">Register User</a></li>
-      <li><a routerLink="/users/login" routerLinkActive="active">Login</a></li>
-      <li><a routerLink="/users/profile" routerLinkActive="active">User Profile</a></li>
-      <li><a routerLink="/users/list" routerLinkActive="active">User List</a></li>
-      <li><a routerLink="/companies/profile/1" routerLinkActive="active">Company Profile</a></li>
-      <li><a routerLink="/companies/list" routerLinkActive="active">List of Companies</a></li>
-      <li><a routerLink="/health-check" routerLinkActive="active">Health Check</a></li>
+      <li *ngIf="!(isAuthenticated$ | async)">
+        <a routerLink="/users/register" routerLinkActive="active">Register</a>
+      </li>
+      <li *ngIf="!(isAuthenticated$ | async)">
+        <a routerLink="/users/login" routerLinkActive="active">Login</a>
+      </li>
+      <li *ngIf="isAuthenticated$ | async">
+        <a [routerLink]="userProfileLink" routerLinkActive="active">User Profile</a>
+      </li>
+      <li *ngIf="isAuthenticated$ | async">
+        <a routerLink="/users/list" routerLinkActive="active">User List</a>
+      </li>
+      <li *ngIf="isAuthenticated$ | async">
+        <a routerLink="/companies/profile/1" routerLinkActive="active">Company Profile</a>
+      </li>
+      <li *ngIf="isAuthenticated$ | async">
+        <a routerLink="/companies/list" routerLinkActive="active">List of Companies</a>
+      </li>
+      <li>
+        <a routerLink="health-check" routerLinkActive="active">Health Check</a>
+      </li>
     </ul>
   </nav>
 

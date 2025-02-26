@@ -5,6 +5,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { RegisterResponse } from '../../../../core/interfaces/register-response.interface';
 import { EMAIL_PATTERN, PASSWORD_PATTERN } from '../../../../core/constants/regex.constants';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'app-user-authorization',
@@ -19,7 +20,8 @@ export class UserAuthorizationComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
     this.authorizationForm = this.fb.group({
       email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_PATTERN)]),
@@ -33,11 +35,11 @@ export class UserAuthorizationComponent {
 
       this.authService.authorizationUser(email, password).subscribe({
         next: (response: RegisterResponse) => {
-          alert('User successfully registered');
+          this.notificationService.success('User successfully authorized', 'Success');
           this.router.navigate(['/about']);
         },
         error: (error: any) => {
-          alert(`Registration failed: ${error.message || 'Something went wrong'}`);
+          this.notificationService.error(`Authorization failed: ${error.message || 'Something went wrong'}`, 'Error');
         }
       });
     }
@@ -46,5 +48,4 @@ export class UserAuthorizationComponent {
   loginWithAuth0(): void {
     this.authService.loginWithAuth0();
   }
-
 }

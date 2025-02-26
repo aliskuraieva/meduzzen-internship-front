@@ -24,11 +24,17 @@ export class ApiService {
     return this.http.get<any>(`${this.apiUrl}/users/${id}`);
   }
 
-  getCurrentUser(): Observable<{ username: string; email: string }> {
-    const headers = { Authorization: `Bearer ${localStorage.getItem('access_token')}` };
-    return this.http.get<{ username: string; email: string }>(`${this.apiUrl}/auth/me`, { headers });
+  getCurrentUser(): Observable<{ username: string, email: string }> {
+    const token = localStorage.getItem('access_token');
+    return this.http.get<{ username: string, email: string }>(
+      `${this.apiUrl}/auth/me`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
   }
-
 
   getAllUsers(): Observable<UsersResponse> {
     return this.http.get<UsersResponse>(`${this.apiUrl}/users`);
