@@ -36,6 +36,10 @@ export class ApiService {
     );
   }
 
+  updateUserProfile(user: { username: string }): Observable<{ username: string, email: string }> {
+    return this.http.put<{ username: string, email: string }>(`${this.apiUrl}/users/me`, user);
+  }
+
   getAllUsers(): Observable<UsersResponse> {
     return this.http.get<UsersResponse>(`${this.apiUrl}/users`);
   }

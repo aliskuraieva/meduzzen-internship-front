@@ -16,6 +16,7 @@ export interface UserData {
   id?: string | number;
   username: string;
   email: string;
+  picture?: string;
 }
 
 export interface UsersDetail {

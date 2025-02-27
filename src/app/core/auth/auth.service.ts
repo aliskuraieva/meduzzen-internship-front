@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { UserData } from '../interfaces/user.interface';
 import { Auth0AuthService } from './auth0-auth.service';
@@ -90,24 +90,31 @@ export class AuthService {
         })
       ).subscribe();
     } else {
-      this.auth0AuthService.getUser().pipe(
+      this.auth0AuthService.getAccessToken().pipe(
+        switchMap(token => {
+          if (token) {
+            localStorage.setItem('access_token', token);
+            return this.auth0AuthService.getUser();
+          }
+          return of(null);
+        }),
         tap(user => {
-          console.log('User from Auth0:', user);
           if (user) {
-            this.userSubject.next({ username: user.name || '', email: user.email || '' });
+            this.userSubject.next({
+              username: user.nickname || user.name || '',
+              email: user.email || '',
+              picture: user.picture || ''
+            });
             this.isAuthenticatedSubject.next(true);
           } else {
             this.isAuthenticatedSubject.next(false);
           }
         }),
-        catchError(error => {
-          console.error('Error loading Auth0 user', error);
+        catchError(() => {
           this.isAuthenticatedSubject.next(false);
           return of(null);
         })
       ).subscribe();
     }
   }
-
-
 }

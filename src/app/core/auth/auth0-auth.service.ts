@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthService as Auth0Service, User } from '@auth0/auth0-angular';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,10 +21,9 @@ export class Auth0AuthService {
 
   logout(): void {
     this.auth0.logout({
-      logoutParams: {
-        returnTo: window.location.origin,
-      },
+      logoutParams: { returnTo: window.location.origin }
     });
+    localStorage.removeItem('access_token');
   }
 
   getUser(): Observable<User | null> {
@@ -32,10 +31,16 @@ export class Auth0AuthService {
   }
 
   getAccessToken(): Observable<string> {
-    return this.auth0.getAccessTokenSilently();
+    return this.auth0.getAccessTokenSilently().pipe(
+      tap(token => localStorage.setItem('access_token', token))
+    );
   }
 
   handleRedirectCallback(): Observable<any> {
-    return this.auth0.handleRedirectCallback();
+    return this.auth0.handleRedirectCallback().pipe(
+      tap(() => {
+        this.getAccessToken().subscribe();
+      })
+    );
   }
 }

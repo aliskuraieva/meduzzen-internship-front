@@ -4,6 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideAuth0 } from '@auth0/auth0-angular';
 import { provideToastr } from 'ngx-toastr';
 import { provideStore } from '@ngrx/store';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { appRoutes } from '../app/core/routes/app.routes';
 import { appReducer } from '../app/core/state/app.reducer';
 
@@ -22,5 +23,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideToastr(),
+    provideAnimations(),
   ],
 };

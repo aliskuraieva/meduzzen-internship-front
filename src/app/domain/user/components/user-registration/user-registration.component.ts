@@ -22,23 +22,33 @@ export class UserRegistrationComponent {
     private router: Router,
     private notificationService: NotificationService
   ) {
-    this.registrationForm = this.fb.group({
-      email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_PATTERN)]),
-      password: new FormControl('', [Validators.required, Validators.pattern(PASSWORD_PATTERN), Validators.minLength(8)]),
-    });
+    this.registrationForm = this.fb.group(
+      {
+        email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_PATTERN)]),
+        password: new FormControl('', [Validators.required, Validators.pattern(PASSWORD_PATTERN), Validators.minLength(8)]),
+        confirmPassword: new FormControl('', [Validators.required])
+      },
+      { validators: this.passwordsMatchValidator }
+    );
+  }
+
+  private passwordsMatchValidator(formGroup: FormGroup) {
+    const password = formGroup.get('password')?.value;
+    const confirmPassword = formGroup.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { notMatching: true };
   }
 
   onSubmit() {
     if (this.registrationForm.valid) {
       const { email, password } = this.registrationForm.value;
 
-      this.authService.authorizationUser(email, password).subscribe({
+      this.authService.registerUser(email, password).subscribe({
         next: () => {
-          this.notificationService.success('User successfully logged in', 'Success');
-          this.router.navigate(['/about']);
+          this.notificationService.success('User successfully registered', 'Success');
+          this.router.navigate(['/login']);
         },
         error: (error: any) => {
-          this.notificationService.error(`Login failed: ${error.message || 'Something went wrong'}`, 'Error');
+          this.notificationService.error(`Registration failed: ${error.message || 'Something went wrong'}`, 'Error');
         }
       });
     }

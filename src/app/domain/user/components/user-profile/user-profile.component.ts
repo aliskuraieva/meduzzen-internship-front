@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 })
 export class UserProfileComponent implements OnInit {
   user: { username: string; email: string } = { username: '', email: '' };
+  originalUser: { username: string; email: string } = { username: '', email: '' };
   isEditing = false;
   isAuthenticated$: Observable<boolean>;
 
@@ -38,17 +39,14 @@ export class UserProfileComponent implements OnInit {
       )
       .subscribe({
         next: (userData) => {
-          if (
-            !userData ||
-            !userData.detail.username ||
-            !userData.detail.email
-          ) {
+          if (!userData || !userData.detail?.username || !userData.detail?.email) {
             console.error('Invalid user data:', userData);
             return;
           }
 
           console.log('User data received:', userData);
-          this.user = userData;
+          this.user = { ...userData.detail };
+          this.originalUser = { ...userData.detail };
         },
         error: (error) => {
           console.error('Error fetching user data:', error);
@@ -66,11 +64,29 @@ export class UserProfileComponent implements OnInit {
   }
 
   saveProfile(): void {
-    console.log('Profile saved:', this.user);
-    this.isEditing = false;
+    console.log('Sending update request with:', { username: this.user.username });
+
+    this.apiService.updateUserProfile({ username: this.user.username }).subscribe({
+      next: (updatedUser) => {
+        console.log('Profile update response:', updatedUser);
+
+        if (updatedUser && updatedUser.username) {
+          this.user.username = updatedUser.username;
+          this.originalUser.username = updatedUser.username;
+          this.isEditing = false;
+        } else {
+          console.error('Invalid response format:', updatedUser);
+        }
+      },
+      error: (error) => {
+        console.error('Error updating profile:', error);
+      },
+    });
   }
 
   cancelEdit(): void {
+    this.user = { ...this.originalUser };
     this.isEditing = false;
   }
 }
+
