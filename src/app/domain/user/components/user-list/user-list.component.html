@@ -1,8 +1,16 @@
 <div class="page-container">
-  <h1>User List</h1>
-  <ul>
-    <li *ngFor="let user of users">
-      {{ user.username }} ({{ user.email }})
-    </li>
-  </ul>
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users" [routerLink]="['/users', user.id]" class="clickable-row">
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

@@ -1,5 +1,4 @@
 <div class="container">
-
   <nav aria-label="Main navigation">
     <ul>
       <li><a routerLink="/about" routerLinkActive="active">About</a></li>
@@ -10,19 +9,30 @@
         <a routerLink="/users/login" routerLinkActive="active">Login</a>
       </li>
       <li *ngIf="isAuthenticated$ | async">
-        <a [routerLink]="userProfileLink" routerLinkActive="active">User Profile</a>
+        <a [routerLink]="userProfileLink" routerLinkActive="active"
+          >User Profile</a
+        >
       </li>
       <li *ngIf="isAuthenticated$ | async">
         <a routerLink="/users/list" routerLinkActive="active">User List</a>
       </li>
       <li *ngIf="isAuthenticated$ | async">
-        <a routerLink="/companies/profile/1" routerLinkActive="active">Company Profile</a>
+        <a routerLink="/companies/profile/1" routerLinkActive="active"
+          >Company Profile</a
+        >
       </li>
       <li *ngIf="isAuthenticated$ | async">
-        <a routerLink="/companies/list" routerLinkActive="active">List of Companies</a>
+        <a routerLink="/companies/list" routerLinkActive="active"
+          >List of Companies</a
+        >
       </li>
+
       <li>
         <a routerLink="health-check" routerLinkActive="active">Health Check</a>
+      </li>
+      <li *ngIf="isAuthenticated$ | async" class="user-info">
+        <span *ngIf="currentUser">{{ currentUser?.detail?.email }}</span>
+        <button class="logout-button" (click)="logout()">Logout</button>
       </li>
     </ul>
   </nav>

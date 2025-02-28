@@ -54,10 +54,6 @@ export class UserProfileComponent implements OnInit {
       });
   }
 
-  logout(): void {
-    this.authService.logout();
-  }
-
   editProfile(): void {
     this.isEditing = true;
     console.log('Editing profile for:', this.user);

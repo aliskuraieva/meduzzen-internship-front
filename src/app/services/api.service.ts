@@ -25,15 +25,7 @@ export class ApiService {
   }
 
   getCurrentUser(): Observable<{ username: string, email: string }> {
-    const token = localStorage.getItem('access_token');
-    return this.http.get<{ username: string, email: string }>(
-      `${this.apiUrl}/auth/me`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
+    return this.http.get<{ username: string, email: string }>(`${this.apiUrl}/auth/me`);
   }
 
   updateUserProfile(user: { username: string }): Observable<{ username: string, email: string }> {

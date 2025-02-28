@@ -4,19 +4,32 @@
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 
-  h1 {
-    font-size: 2rem;
-    color: #333;
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
   }
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-
-    li {
-      font-size: 1.1rem;
-      color: #555;
-      margin: 5px 0;
-    }
+  .user-table th, .user-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
   }
-}
+
+  .user-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+
+  .clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .clickable-row:hover {
+    background-color: #f1f1f1;
+  }
+
+
+  }
+

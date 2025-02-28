@@ -1,8 +1,12 @@
-<div *ngIf="healthStatus">
-  <h2>Health Check Status:</h2>
-  <pre>{{ healthStatus | json }}</pre>
+<div *ngIf="healthStatus" class="health-check">
+  <h2>Health Check Status</h2>
+  <div class="status-box" [ngClass]="{ 'ok': healthStatus.status_code === 200, 'error': healthStatus.status_code !== 200 }">
+    <p><strong>Status Code:</strong> {{ healthStatus.status_code }}</p>
+    <p><strong>Detail:</strong> {{ healthStatus.detail }}</p>
+    <p><strong>Result:</strong> {{ healthStatus.result }}</p>
+  </div>
 </div>
 
-<div *ngIf="!healthStatus">
+<div *ngIf="!healthStatus" class="loading">
   <p>Loading health status...</p>
 </div>

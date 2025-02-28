@@ -58,7 +58,11 @@ export class AppComponent {
   changeTestString(): void {
     this.store.dispatch(changeTestString({ newTestString: 'New Test String' }));
   }
-
+  logout(): void {
+    this.authService.logout();
+    this.currentUser = null;
+    this.userProfileLink = '/users/profile';
+  }
   @HostListener('document:keydown.escape')
   handleEscape(): void {
     if (this.isModalVisible) {

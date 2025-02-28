@@ -56,15 +56,37 @@ export class AuthService {
 
     return this.userAuthorizationService.authorizationUser(email, password).pipe(
       tap(response => {
-        console.log('response', response);
-        console.log('access_token', response?.access_token);
+        console.log('Login API Response:', response);
+        console.log('accessToken:', response?.detail?.accessToken);
 
-        if (response?.detail.access_token){
-          localStorage.setItem('access_token', response.detail.access_token);
-          localStorage.setItem('refresh_token', response.detail.refresh_token);
+        if (response?.detail?.accessToken) {
+          localStorage.setItem('access_token', response.detail.accessToken);
+          localStorage.setItem('refresh_token', response.detail.refreshToken);
           this.isAuthenticatedSubject.next(true);
           this.loadUserData();
         }
+      })
+    );
+  }
+
+  refreshAccessToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+      return of(null);
+    }
+
+    return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken }).pipe(
+      tap(response => {
+        if (response?.data?.accessToken) {
+          localStorage.setItem('access_token', response.data.accessToken);
+          this.isAuthenticatedSubject.next(true);
+          this.loadUserData();
+        }
+      }),
+      catchError(error => {
+        console.error('Error refreshing token', error);
+        this.isAuthenticatedSubject.next(false);
+        return of(null);
       })
     );
   }
@@ -85,7 +107,11 @@ export class AuthService {
         }),
         catchError(error => {
           console.error('Error loading user data', error);
-          this.isAuthenticatedSubject.next(false);
+          if (error.status === 401) {
+            this.refreshAccessToken().subscribe();
+          } else {
+            this.isAuthenticatedSubject.next(false);
+          }
           return of(null);
         })
       ).subscribe();
