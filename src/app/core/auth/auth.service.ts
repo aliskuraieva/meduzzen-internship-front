@@ -6,6 +6,7 @@ import { UserData } from '../interfaces/user.interface';
 import { Auth0AuthService } from './auth0-auth.service';
 import { UserRegistrationService } from '../../domain/user/components/user-registration/user-registration.service';
 import { UserAuthorizationService } from '../../domain/user/components/user-authorization/user-authorization.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class AuthService {
     private auth0AuthService: Auth0AuthService,
     private userRegistrationService: UserRegistrationService,
     private userAuthorizationService: UserAuthorizationService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
     this.loadUserData();
     this.auth0AuthService.handleRedirectCallback();
@@ -40,6 +42,7 @@ export class AuthService {
     localStorage.removeItem('refresh_token');
     this.userSubject.next(null);
     this.isAuthenticatedSubject.next(false);
+    this.router.navigate(['/users/login']);
   }
 
   getUser(): Observable<UserData | null> {
@@ -51,14 +54,8 @@ export class AuthService {
   }
 
   authorizationUser(email: string, password: string): Observable<any> {
-    console.log('email', email);
-    console.log('password', password);
-
     return this.userAuthorizationService.authorizationUser(email, password).pipe(
       tap(response => {
-        console.log('Login API Response:', response);
-        console.log('accessToken:', response?.detail?.accessToken);
-
         if (response?.detail?.accessToken) {
           localStorage.setItem('access_token', response.detail.accessToken);
           localStorage.setItem('refresh_token', response.detail.refreshToken);
@@ -85,7 +82,8 @@ export class AuthService {
       }),
       catchError(error => {
         console.error('Error refreshing token', error);
-        this.isAuthenticatedSubject.next(false);
+        this.clearTokens();
+        this.router.navigate(['/users/login']);
         return of(null);
       })
     );
@@ -99,7 +97,6 @@ export class AuthService {
         headers: { Authorization: `Bearer ${storedToken}` }
       }).pipe(
         tap(user => {
-          console.log('User from API:', user);
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
@@ -110,7 +107,7 @@ export class AuthService {
           if (error.status === 401) {
             this.refreshAccessToken().subscribe();
           } else {
-            this.isAuthenticatedSubject.next(false);
+            this.clearTokens();
           }
           return of(null);
         })
@@ -142,5 +139,11 @@ export class AuthService {
         })
       ).subscribe();
     }
+  }
+
+  private clearTokens(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    this.isAuthenticatedSubject.next(false);
   }
 }
