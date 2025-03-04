@@ -54,6 +54,7 @@ export class UserProfileComponent implements OnInit {
       });
   }
 
+
   editProfile(): void {
     this.isEditing = true;
     console.log('Editing profile for:', this.user);

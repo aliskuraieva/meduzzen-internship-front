@@ -3,11 +3,13 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
 import { UserAuthorizationComponent } from './components/user-authorization/user-authorization.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { GuestGuard } from '../../core/guards/guest.guard';
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 export const userRoutes: Routes = [
-  { path: 'register', component: UserRegistrationComponent },
-  { path: 'login', component: UserAuthorizationComponent },
-  { path: 'list', component: UserListComponent },
-  { path: 'profile', component: UserProfileComponent },
-  { path: 'profile/:id', component: UserProfileComponent }
+  { path: 'register', component: UserRegistrationComponent, canActivate: [GuestGuard] },
+  { path: 'login', component: UserAuthorizationComponent, canActivate: [GuestGuard] },
+  { path: 'list', component: UserListComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  { path: 'profile/:id', component: UserProfileComponent, canActivate: [AuthGuard] }
 ];

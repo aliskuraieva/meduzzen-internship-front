@@ -9,12 +9,12 @@ import { UserAuthorizationService } from '../../domain/user/components/user-auth
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private userSubject = new BehaviorSubject<UserData | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  private readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL']
+  private readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'];
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(
@@ -24,8 +24,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    this.loadUserData();
-    this.auth0AuthService.handleRedirectCallback();
+    this.auth0AuthService.handleRedirectCallback().subscribe();
   }
 
   loginWithAuth0(): void {
@@ -38,11 +37,9 @@ export class AuthService {
 
   logout(): void {
     this.auth0AuthService.logout();
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    this.clearTokens();
     this.userSubject.next(null);
     this.isAuthenticatedSubject.next(false);
-    this.router.navigate(['/users/login']);
   }
 
   getUser(): Observable<UserData | null> {
@@ -55,10 +52,9 @@ export class AuthService {
 
   authorizationUser(email: string, password: string): Observable<any> {
     return this.userAuthorizationService.authorizationUser(email, password).pipe(
-      tap(response => {
+      tap((response) => {
         if (response?.detail?.accessToken) {
-          localStorage.setItem('access_token', response.detail.accessToken);
-          localStorage.setItem('refresh_token', response.detail.refreshToken);
+          this.saveTokens(response.detail.accessToken, response.detail.refreshToken);
           this.isAuthenticatedSubject.next(true);
           this.loadUserData();
         }
@@ -67,83 +63,112 @@ export class AuthService {
   }
 
   refreshAccessToken(): Observable<any> {
-    const refreshToken = localStorage.getItem('refresh_token');
+    const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
       return of(null);
     }
-
     return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken }).pipe(
-      tap(response => {
+      tap((response) => {
         if (response?.data?.accessToken) {
-          localStorage.setItem('access_token', response.data.accessToken);
+          this.saveTokens(response.data.accessToken, response.data.refreshToken);
           this.isAuthenticatedSubject.next(true);
           this.loadUserData();
         }
       }),
-      catchError(error => {
-        console.error('Error refreshing token', error);
-        this.clearTokens();
-        this.router.navigate(['/users/login']);
-        return of(null);
-      })
+      catchError(() => of(null))
     );
   }
 
-  private loadUserData(): void {
-    const storedToken = localStorage.getItem('access_token');
-
+  loadUserData(): void {
+    const storedToken = this.getAccessToken();
     if (storedToken) {
-      this.http.get<UserData>(`${this.apiUrl}/auth/me`, {
-        headers: { Authorization: `Bearer ${storedToken}` }
-      }).pipe(
-        tap(user => {
+      this.loadUserFromApi(storedToken);
+    } else {
+      this.loadUserFromAuth0();
+    }
+  }
+
+  private loadUserFromApi(storedToken: string): void {
+    this.http
+      .get<UserData>(`${this.apiUrl}/auth/me`, { headers: { Authorization: `Bearer ${storedToken}` } })
+      .pipe(
+        tap((user) => {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
           }
         }),
-        catchError(error => {
-          console.error('Error loading user data', error);
-          if (error.status === 401) {
-            this.refreshAccessToken().subscribe();
-          } else {
-            this.clearTokens();
-          }
+        catchError((error) => this.handleApiError(error))
+      )
+      .subscribe();
+  }
+
+  private loadUserFromAuth0(): void {
+    this.auth0AuthService.getAccessToken().pipe(
+      switchMap((token) => {
+        if (token) {
+          this.saveTokens(token, '');
+          this.loadUserFromApi(token);
+          return this.auth0AuthService.getUser().pipe(
+            tap((user) => {
+              if (user) {
+                const mappedUser: UserData = {
+                  name: user.nickname || user.name || '',
+                  email: user.email || '',
+                  picture: user.picture || '',
+                };
+                this.handleUserFromAuth0(mappedUser);
+              }
+            })
+          );
+        } else {
           return of(null);
-        })
-      ).subscribe();
+        }
+      }),
+      catchError((error) => this.handleAuth0Error(error))
+    ).subscribe();
+  }
+
+  private handleApiError(error: any): Observable<null> {
+    console.error('Error loading user data', error);
+    if (error.status === 401) {
+      this.refreshAccessToken().subscribe(() => this.loadUserData());
     } else {
-      this.auth0AuthService.getAccessToken().pipe(
-        switchMap(token => {
-          if (token) {
-            localStorage.setItem('access_token', token);
-            return this.auth0AuthService.getUser();
-          }
-          return of(null);
-        }),
-        tap(user => {
-          if (user) {
-            this.userSubject.next({
-              username: user.nickname || user.name || '',
-              email: user.email || '',
-              picture: user.picture || ''
-            });
-            this.isAuthenticatedSubject.next(true);
-          } else {
-            this.isAuthenticatedSubject.next(false);
-          }
-        }),
-        catchError(() => {
-          this.isAuthenticatedSubject.next(false);
-          return of(null);
-        })
-      ).subscribe();
+      this.clearTokens();
     }
+    return of(null);
+  }
+
+  private handleAuth0Error(error: any): Observable<null> {
+    console.error('Error loading user data from Auth0', error);
+    this.clearTokens();
+    return of(null);
+  }
+
+  private handleUserFromAuth0(user: UserData | null): void {
+    if (user) {
+      this.userSubject.next(user);
+      this.isAuthenticatedSubject.next(true);
+    } else {
+      this.isAuthenticatedSubject.next(false);
+    }
+  }
+
+  private getAccessToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+
+  private getRefreshToken(): string | null {
+    return localStorage.getItem('refresh_token');
+  }
+
+  private saveTokens(accessToken: string, refreshToken: string): void {
+    localStorage.setItem('access_token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
   }
 
   private clearTokens(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    this.isAuthenticatedSubject.next(false);
   }
 }

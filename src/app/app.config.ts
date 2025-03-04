@@ -22,7 +22,9 @@ export const appConfig: ApplicationConfig = {
         audience: import.meta.env['NG_APP_PUBLIC_AUTH0_AUDIENCE'],
         scope: 'openid profile email',
       },
+      cacheLocation: 'localstorage',
     }),
+
     provideToastr(),
     provideAnimations(),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

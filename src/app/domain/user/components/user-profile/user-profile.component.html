@@ -1,4 +1,12 @@
 <div *ngIf="!isEditing" class="profile-container">
+  <div *ngIf="user?.picture; else noAvatar">
+    <img [src]="user.picture" alt="User Avatar" class="user-avatar" />
+  </div>
+  <ng-template #noAvatar>
+    <div class="user-avatar-placeholder">
+      {{ user?.username?.charAt(0).toUpperCase() }}
+    </div>
+  </ng-template>
   <p><strong>ID:</strong> {{ user?.id }}</p>
   <p><strong>Name:</strong> {{ user?.username }}</p>
   <p><strong>Email:</strong> {{ user?.email }}</p>
@@ -17,6 +25,8 @@
     <input id="email" [(ngModel)]="user.email" name="email" [readonly]="true" />
 
     <button type="submit">Save</button>
-    <button type="button" class="cancel-button" (click)="cancelEdit()">Cancel</button>
+    <button type="button" class="cancel-button" (click)="cancelEdit()">
+      Cancel
+    </button>
   </form>
 </div>

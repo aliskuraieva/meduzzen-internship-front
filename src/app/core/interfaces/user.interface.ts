@@ -14,7 +14,7 @@ export interface Auth0User {
 
 export interface UserData {
   id?: string | number;
-  username: string;
+  name: string;
   email: string;
   picture?: string;
 }
