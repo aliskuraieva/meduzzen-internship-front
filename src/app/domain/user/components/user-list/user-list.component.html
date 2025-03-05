@@ -1,1 +1,16 @@
-<p>user-list works!</p>
+<div class="page-container">
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users" [routerLink]="['/users', user.id]" class="clickable-row">
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
