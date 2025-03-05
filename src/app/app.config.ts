@@ -1,6 +1,10 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { provideAuth0 } from '@auth0/auth0-angular';
 import { provideToastr } from 'ngx-toastr';
 import { provideStore } from '@ngrx/store';
@@ -27,6 +31,6 @@ export const appConfig: ApplicationConfig = {
 
     provideToastr(),
     provideAnimations(),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
 };

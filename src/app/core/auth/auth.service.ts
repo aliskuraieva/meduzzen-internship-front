@@ -51,15 +51,20 @@ export class AuthService {
   }
 
   authorizationUser(email: string, password: string): Observable<any> {
-    return this.userAuthorizationService.authorizationUser(email, password).pipe(
-      tap((response) => {
-        if (response?.detail?.accessToken) {
-          this.saveTokens(response.detail.accessToken, response.detail.refreshToken);
-          this.isAuthenticatedSubject.next(true);
-          this.loadUserData();
-        }
-      })
-    );
+    return this.userAuthorizationService
+      .authorizationUser(email, password)
+      .pipe(
+        tap((response) => {
+          if (response?.detail?.accessToken) {
+            this.saveTokens(
+              response.detail.accessToken,
+              response.detail.refreshToken
+            );
+            this.isAuthenticatedSubject.next(true);
+            this.loadUserData();
+          }
+        })
+      );
   }
 
   refreshAccessToken(): Observable<any> {
@@ -67,16 +72,21 @@ export class AuthService {
     if (!refreshToken) {
       return of(null);
     }
-    return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken }).pipe(
-      tap((response) => {
-        if (response?.data?.accessToken) {
-          this.saveTokens(response.data.accessToken, response.data.refreshToken);
-          this.isAuthenticatedSubject.next(true);
-          this.loadUserData();
-        }
-      }),
-      catchError(() => of(null))
-    );
+    return this.http
+      .post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken })
+      .pipe(
+        tap((response) => {
+          if (response?.data?.accessToken) {
+            this.saveTokens(
+              response.data.accessToken,
+              response.data.refreshToken
+            );
+            this.isAuthenticatedSubject.next(true);
+            this.loadUserData();
+          }
+        }),
+        catchError(() => of(null))
+      );
   }
 
   loadUserData(): void {
@@ -90,7 +100,9 @@ export class AuthService {
 
   private loadUserFromApi(storedToken: string): void {
     this.http
-      .get<UserData>(`${this.apiUrl}/auth/me`, { headers: { Authorization: `Bearer ${storedToken}` } })
+      .get<UserData>(`${this.apiUrl}/auth/me`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
       .pipe(
         tap((user) => {
           if (user) {
@@ -104,29 +116,32 @@ export class AuthService {
   }
 
   private loadUserFromAuth0(): void {
-    this.auth0AuthService.getAccessToken().pipe(
-      switchMap((token) => {
-        if (token) {
-          this.saveTokens(token, '');
-          this.loadUserFromApi(token);
-          return this.auth0AuthService.getUser().pipe(
-            tap((user) => {
-              if (user) {
-                const mappedUser: UserData = {
-                  name: user.nickname || user.name || '',
-                  email: user.email || '',
-                  picture: user.picture || '',
-                };
-                this.handleUserFromAuth0(mappedUser);
-              }
-            })
-          );
-        } else {
-          return of(null);
-        }
-      }),
-      catchError((error) => this.handleAuth0Error(error))
-    ).subscribe();
+    this.auth0AuthService
+      .getAccessToken()
+      .pipe(
+        switchMap((token) => {
+          if (token) {
+            this.saveTokens(token, '');
+            this.loadUserFromApi(token);
+            return this.auth0AuthService.getUser().pipe(
+              tap((user) => {
+                if (user) {
+                  const mappedUser: UserData = {
+                    name: user.nickname || user.name || '',
+                    email: user.email || '',
+                    picture: user.picture || '',
+                  };
+                  this.handleUserFromAuth0(mappedUser);
+                }
+              })
+            );
+          } else {
+            return of(null);
+          }
+        }),
+        catchError((error) => this.handleAuth0Error(error))
+      )
+      .subscribe();
   }
 
   private handleApiError(error: any): Observable<null> {

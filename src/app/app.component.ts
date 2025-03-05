@@ -26,7 +26,10 @@ export class AppComponent implements OnInit {
   userProfileLink = '/users/profile';
   currentUser: UserData | null = null;
 
-  constructor(private store: Store<AppState>, private authService: AuthService) {
+  constructor(
+    private store: Store<AppState>,
+    private authService: AuthService
+  ) {
     this.testString$ = this.store.select(selectTestString);
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
@@ -42,7 +45,6 @@ export class AppComponent implements OnInit {
       }
     });
   }
-
 
   private setUser(user: UserData, source: string): void {
     if (!user) {

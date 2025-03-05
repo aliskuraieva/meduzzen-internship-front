@@ -14,7 +14,9 @@ export class Auth0AuthService {
   }
 
   registerWithAuth0(): void {
-    this.auth0.loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } });
+    this.auth0.loginWithRedirect({
+      authorizationParams: { screen_hint: 'signup' },
+    });
   }
 
   logout(): void {
@@ -45,8 +47,6 @@ export class Auth0AuthService {
   }
 
   isAuthenticated(): Observable<boolean> {
-    return this.auth0.isAuthenticated$.pipe(
-      catchError(() => of(false))
-    );
+    return this.auth0.isAuthenticated$.pipe(catchError(() => of(false)));
   }
 }

@@ -15,12 +15,14 @@ export class HealthStatusComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    console.log(import.meta.env['NG_APP_PUBLIC_API_URL']);
     this.apiService.checkHealth().subscribe({
       next: (res) => (this.healthStatus = res),
       error: (err) => {
-        console.error('Health check failed:', err);
-        this.healthStatus = { status_code: 500, detail: 'API is down', result: 'not working' };
+        this.healthStatus = {
+          status_code: 500,
+          detail: 'API is down',
+          result: 'not working',
+        };
       },
     });
   }
