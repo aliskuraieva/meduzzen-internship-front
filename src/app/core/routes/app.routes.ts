@@ -20,5 +20,5 @@ export const appRoutes: Routes = [
   { path: 'companies', loadChildren: () => import('../../domain/company/company.routes').then(m => m.companyRoutes) },
   { path: 'users', loadChildren: () => import('../../domain/user/user.routes').then(m => m.userRoutes) },
 
-  // { path: '**', redirectTo: '/about' }
+  { path: '**', redirectTo: '/about' }
 ];
