@@ -17,8 +17,15 @@ export const appRoutes: Routes = [
 
   { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
 
-  { path: 'companies', loadChildren: () => import('../../domain/company/company.routes').then(m => m.companyRoutes) },
-  { path: 'users', loadChildren: () => import('../../domain/user/user.routes').then(m => m.userRoutes) },
+  {
+    path: 'companies',
+    loadChildren: () => import('../../domain/company/company.routes').then(m => m.companyRoutes),
+  },
+  {
+    path: 'users',
+    loadChildren: () => import('../../domain/user/user.routes').then(m => m.userRoutes),
+  },
 
   { path: '**', redirectTo: '/about' }
 ];
+

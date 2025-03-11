@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { UserData } from '../interfaces/user.interface';
+import { UserData, User } from '../interfaces/user.interface';
 import { Auth0AuthService } from './auth0-auth.service';
 import { UserRegistrationService } from '../../domain/user/components/user-registration/user-registration.service';
 import { UserAuthorizationService } from '../../domain/user/components/user-authorization/user-authorization.service';
@@ -13,9 +13,11 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private userSubject = new BehaviorSubject<UserData | null>(null);
+  private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'];
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
   constructor(
     private auth0AuthService: Auth0AuthService,
@@ -25,6 +27,7 @@ export class AuthService {
     private router: Router
   ) {
     this.auth0AuthService.handleRedirectCallback().subscribe();
+    this.loadUserData();
   }
 
   loginWithAuth0(): void {
@@ -44,6 +47,11 @@ export class AuthService {
 
   getUser(): Observable<UserData | null> {
     return this.userSubject.asObservable();
+  }
+
+  setCurrentUser(user: User | null): void {
+    this.currentUserSubject.next(user);
+    console.log('Current user set:', user);
   }
 
   registerUser(email: string, password: string) {
@@ -164,6 +172,7 @@ export class AuthService {
     if (user) {
       this.userSubject.next(user);
       this.isAuthenticatedSubject.next(true);
+      localStorage.setItem('userId', user.id?.toString() || '');
     } else {
       this.isAuthenticatedSubject.next(false);
     }
@@ -185,5 +194,6 @@ export class AuthService {
   private clearTokens(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+
   }
 }

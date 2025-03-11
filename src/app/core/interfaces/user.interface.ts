@@ -2,8 +2,9 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  createdAt: string;
-  updatedAt: string;
+  password?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Auth0User {

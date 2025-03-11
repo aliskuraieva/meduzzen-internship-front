@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import {
   HttpEvent,
   HttpHandler,
@@ -18,12 +18,16 @@ export class AuthInterceptor implements HttpInterceptor {
     refreshToken: string;
   } | null>(null);
 
-  constructor(private authService: AuthService) {}
+  private authService!: AuthService;
+
+  constructor(private injector: Injector) {}
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    this.authService = this.injector.get(AuthService);
+
     const accessToken = localStorage.getItem('access_token');
 
     const clonedReq = accessToken

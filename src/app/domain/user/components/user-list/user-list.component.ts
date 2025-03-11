@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../services/api.service';
 import { User } from '../../../../core/interfaces/user.interface';
-import { UsersResponse } from '../../../../core/interfaces/user.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-list',
@@ -14,8 +14,9 @@ import { UsersResponse } from '../../../../core/interfaces/user.interface';
 export class UserListComponent implements OnInit {
 
   users: User[] = [];
+  errorMessage: string = '';
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchUsers();
@@ -23,17 +24,17 @@ export class UserListComponent implements OnInit {
 
   fetchUsers(): void {
     this.apiService.getAllUsers().subscribe({
-      next: (response: UsersResponse) => {
+      next: (response: any) => {
         this.users = response.detail.users;
-        console.log('this.users', this.users);
       },
       error: (error) => {
+        this.errorMessage = 'Error fetching users data. Please try again later.';
         console.error('Error fetching users data:', error);
-      },
-      complete: () => {
-        console.log('Request complete');
       }
     });
   }
 
+  goToProfile(userId: number): void {
+    this.router.navigate(['/users/profile', userId]);
+  }
 }
