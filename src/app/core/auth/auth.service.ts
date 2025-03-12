@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { UserData, User } from '../interfaces/user.interface';
 import { Auth0AuthService } from './auth0-auth.service';
 import { UserRegistrationService } from '../../domain/user/components/user-registration/user-registration.service';
@@ -21,13 +21,16 @@ export class AuthService {
   public currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
 
+    private http!: HttpClient
+
   constructor(
     private auth0AuthService: Auth0AuthService,
     private userRegistrationService: UserRegistrationService,
     private userAuthorizationService: UserAuthorizationService,
-    private http: HttpClient,
+    httpBackend: HttpBackend,
     private router: Router
   ) {
+    this.http = new HttpClient(httpBackend);
     this.auth0AuthService.handleRedirectCallback().subscribe();
     this.loadUserData();
   }
@@ -117,7 +120,7 @@ export class AuthService {
     }
   }
 
-  private loadUserFromApi(storedToken: string): void {
+  loadUserFromApi(storedToken: string): void {
     this.http
       .get<UserData>(`${this.apiUrl}/auth/me`, {
         headers: { Authorization: `Bearer ${storedToken}` },
@@ -127,6 +130,7 @@ export class AuthService {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
+
           } else {
             this.isAuthenticatedSubject.next(false);
           }
