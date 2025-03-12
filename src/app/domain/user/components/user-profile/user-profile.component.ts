@@ -62,11 +62,9 @@ export class UserProfileComponent implements OnInit {
   editProfile(): void {
     this.isEditing = true;
     this.editedUser = { username: this.user.username, password: '' };
-    console.log('Editing profile for:', this.user);
   }
 
   saveProfile(): void {
-    console.log('Sending update request with:', this.editedUser);
 
     const updatedUser: { username: string; password?: string } = { username: this.editedUser.username };
 
@@ -76,7 +74,6 @@ export class UserProfileComponent implements OnInit {
 
     this.apiService.updateUserProfile(this.user.id.toString(), updatedUser).subscribe({
       next: (updatedUserResponse) => {
-        console.log('Profile update response:', updatedUserResponse);
 
         if (updatedUserResponse?.detail?.username) {
           this.user.username = updatedUserResponse.detail.username;

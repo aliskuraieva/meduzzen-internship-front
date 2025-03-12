@@ -27,7 +27,6 @@ export class CompanyListComponent implements OnInit {
         console.error('Error fetching companies data:', error);
       },
       complete: () => {
-        console.log('Request complete');
       }
     });
   }

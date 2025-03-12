@@ -23,7 +23,6 @@ export class UserService {
     return this.apiService.getAllUsers(page, pageSize).pipe(
       map((response: UsersResponse) => response.detail.users || []),
       catchError((error) => {
-        console.error('Error fetching users:', error);
         this.notificationService.error('Error fetching users');
         return throwError(() => error);
       })
@@ -40,7 +39,6 @@ export class UserService {
 
   setCurrentUser(user: User | null): void {
     this.currentUserSubject.next(user);
-    console.log('Current user set:', user);
   }
 
   updateUserProfile(id: string, user: Partial<{ username: string; password: string }>): Observable<Partial<User>> {
@@ -68,7 +66,6 @@ export class UserService {
         this.authService.logout();
       }),
       catchError((error) => {
-        console.error('Error deleting user:', error);
         this.notificationService.error('Error deleting user');
         return throwError(() => error);
       })

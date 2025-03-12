@@ -35,8 +35,6 @@ export class UserListComponent implements OnInit {
     if (this.pageSize < 1) this.pageSize = 1;
     if (this.pageSize > 100) this.pageSize = 100;
 
-    console.log('Requesting users:', this.currentPage, this.pageSize);
-
     this.apiService.getAllUsers(this.currentPage, this.pageSize).subscribe({
       next: (response: PaginationResponse) => {
         this.users = response.detail.users;

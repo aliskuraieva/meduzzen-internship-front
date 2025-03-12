@@ -42,7 +42,6 @@ export class UserDetailComponent implements OnInit {
             return;
           }
 
-          console.log('User data received:', userData);
           this.user = { ...userData.detail };
         },
         error: (error) => {

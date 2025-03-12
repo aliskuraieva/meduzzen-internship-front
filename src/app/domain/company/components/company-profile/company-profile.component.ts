@@ -34,7 +34,6 @@ export class CompanyProfileComponent implements OnInit {
   }
 
   editCompanyProfile(): void {
-    console.log('Editing company profile for:', this.company);
   }
 
   formatDate(date: string): string {
