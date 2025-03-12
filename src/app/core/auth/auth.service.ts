@@ -13,11 +13,13 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private userSubject = new BehaviorSubject<UserData | null>(null);
-  private currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+  private currentUserSubject: BehaviorSubject<User | null> =
+    new BehaviorSubject<User | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'];
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
-  public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
+  public currentUser$: Observable<User | null> =
+    this.currentUserSubject.asObservable();
 
   constructor(
     private auth0AuthService: Auth0AuthService,
@@ -39,10 +41,12 @@ export class AuthService {
   }
 
   logout(): void {
+    console.warn('Logout triggered');
     this.auth0AuthService.logout();
     this.clearTokens();
     this.userSubject.next(null);
     this.isAuthenticatedSubject.next(false);
+    this.router.navigate(['/login']);
   }
 
   getUser(): Observable<UserData | null> {
@@ -51,7 +55,6 @@ export class AuthService {
 
   setCurrentUser(user: User | null): void {
     this.currentUserSubject.next(user);
-
   }
 
   registerUser(email: string, password: string) {
@@ -77,13 +80,16 @@ export class AuthService {
 
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
+    console.log('Attempting refresh, refreshToken:', refreshToken);
     if (!refreshToken) {
+      console.warn('No refresh token found, cannot refresh');
       return of(null);
     }
     return this.http
       .post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken })
       .pipe(
         tap((response) => {
+          console.log('Token refresh response:', response);
           if (response?.data?.accessToken) {
             this.saveTokens(
               response.data.accessToken,
@@ -93,15 +99,20 @@ export class AuthService {
             this.loadUserData();
           }
         }),
-        catchError(() => of(null))
+        catchError((error) => {
+          console.error('Error refreshing token:', error);
+          return of(null);
+        })
       );
   }
 
   loadUserData(): void {
     const storedToken = this.getAccessToken();
+    console.log('loadUserData called, storedToken:', storedToken);
     if (storedToken) {
       this.loadUserFromApi(storedToken);
     } else {
+      console.warn('No stored token found, trying Auth0 login');
       this.loadUserFromAuth0();
     }
   }
@@ -116,9 +127,15 @@ export class AuthService {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
+          } else {
+            this.isAuthenticatedSubject.next(false);
           }
         }),
-        catchError((error) => this.handleApiError(error))
+        catchError((error) => {
+          console.error('Error in loadUserFromApi:', error);
+          this.isAuthenticatedSubject.next(false);
+          return this.handleApiError(error);
+        })
       )
       .subscribe();
   }
@@ -153,10 +170,18 @@ export class AuthService {
   }
 
   private handleApiError(error: any): Observable<null> {
-    console.error('Error loading user data', error);
+    console.error('handleApiError called:', error);
     if (error.status === 401) {
-      this.refreshAccessToken().subscribe(() => this.loadUserData());
+      console.warn('401 error detected, attempting token refresh');
+      this.refreshAccessToken().subscribe((newToken) => {
+        if (newToken) {
+          this.loadUserData();
+        } else {
+          this.logout();
+        }
+      });
     } else {
+      console.error('Clearing tokens due to non-401 error');
       this.clearTokens();
     }
     return of(null);
@@ -192,8 +217,8 @@ export class AuthService {
   }
 
   private clearTokens(): void {
+    console.warn('Clearing tokens');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-
   }
 }

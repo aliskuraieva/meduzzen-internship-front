@@ -40,7 +40,10 @@ export class ApiService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  updateUserProfile(updatedUser: { username: string; password?: string }): Observable<any> {
+  updateUserProfile(updatedUser: {
+    username: string;
+    password?: string;
+  }): Observable<any> {
     const token = localStorage.getItem('access_token');
 
     if (token) {

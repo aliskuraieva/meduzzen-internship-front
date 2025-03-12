@@ -41,10 +41,12 @@ export class UserService {
     this.currentUserSubject.next(user);
   }
 
-  updateUserProfile(id: string, user: Partial<{ username: string; password: string }>): Observable<Partial<User>> {
+  updateUserProfile(
+    user: Partial<{ username: string; password: string }>
+  ): Observable<Partial<User>> {
     const updatedUser = {
       username: user.username || '',
-      password: user.password || ''
+      password: user.password || '',
     };
 
     return this.apiService.updateUserProfile(updatedUser).pipe(

@@ -65,15 +65,23 @@ export class AuthInterceptor implements HttpInterceptor {
           this.refreshTokenInProgress = false;
 
           if (newToken) {
-            localStorage.setItem('access_token', newToken.detail.data.accessToken);
-            localStorage.setItem('refresh_token', newToken.detail.data.refreshToken);
+            localStorage.setItem(
+              'access_token',
+              newToken.detail.data.accessToken
+            );
+            localStorage.setItem(
+              'refresh_token',
+              newToken.detail.data.refreshToken
+            );
             this.refreshTokenSubject.next({
               accessToken: newToken.detail.data.accessToken,
               refreshToken: newToken.detail.data.refreshToken,
             });
             return next.handle(
               req.clone({
-                setHeaders: { Authorization: `Bearer ${newToken.detail.data.accessToken}` },
+                setHeaders: {
+                  Authorization: `Bearer ${newToken.detail.data.accessToken}`,
+                },
               })
             );
           }
