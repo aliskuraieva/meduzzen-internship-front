@@ -2,15 +2,23 @@
   <table class="user-table">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Username</th>
         <th>Email</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let user of users" (click)="goToProfile(user.id)" class="clickable-row" style="cursor: pointer;">
+        <td>{{ user.id }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="totalUsers > pageSize" class="pagination">
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+  </div>
 </div>

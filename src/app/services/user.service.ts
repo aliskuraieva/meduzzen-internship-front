@@ -13,11 +13,20 @@ export class UserService {
   private usersSubject = new BehaviorSubject<User[]>([]);
   private currentUserSubject = new BehaviorSubject<User | null>(null);
 
-  constructor(private authService: AuthService, private apiService: ApiService, private notificationService: NotificationService) {} // Додайте NotificationService
+  constructor(
+    private authService: AuthService,
+    private apiService: ApiService,
+    private notificationService: NotificationService
+  ) {}
 
   getAllUsers(page: number = 1, pageSize: number = 10): Observable<User[]> {
-    return this.apiService.getAllUsers().pipe(
-      map((response: UsersResponse) => response?.detail?.users || [])
+    return this.apiService.getAllUsers(page, pageSize).pipe(
+      map((response: UsersResponse) => response.detail.users || []),
+      catchError((error) => {
+        console.error('Error fetching users:', error);
+        this.notificationService.error('Error fetching users');
+        return throwError(() => error);
+      })
     );
   }
 
@@ -67,9 +76,12 @@ export class UserService {
   }
 
   setPagination(page: number, pageSize: number): void {
-    this.getAllUsers(page, pageSize).subscribe(users => {
+    this.getAllUsers(page, pageSize).subscribe((users) => {
       this.usersSubject.next(users);
     });
   }
 
+  get users$(): Observable<User[]> {
+    return this.usersSubject.asObservable();
+  }
 }

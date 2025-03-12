@@ -32,3 +32,10 @@ export interface UsersResponse {
   result: string;
   detail: UsersDetail;
 }
+
+export interface PaginationResponse {
+  detail: {
+    users: User[];
+    total: number;
+  };
+}

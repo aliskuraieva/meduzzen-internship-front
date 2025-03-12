@@ -45,10 +45,13 @@ export class ApiService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  getAllUsers(): Observable<UsersResponse> {
-    return this.http
-      .get<UsersResponse>(`${this.apiUrl}/users`)
-      .pipe(catchError((error) => this.handleError(error)));
+  getAllUsers(page: number = 1, pageSize: number = 10): Observable<UsersResponse> {
+    return this.http.get<UsersResponse>(`${this.apiUrl}/users`, {
+      params: {
+        page: page.toString(),
+        pageSize: pageSize.toString()
+      }
+    });
   }
 
   registerUser(email: string, password: string): Observable<any> {
