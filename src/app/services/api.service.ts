@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError} from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { UsersResponse } from '../core/interfaces/user.interface';
 
@@ -40,17 +40,27 @@ export class ApiService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  updateUserProfile(id: string, user: Partial<{ username: string; password: string }>): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/users/me`, user)
-      .pipe(catchError((error) => this.handleError(error)));
+  updateUserProfile(updatedUser: { username: string; password?: string }): Observable<any> {
+    const token = localStorage.getItem('access_token');
+
+    if (token) {
+      return this.http.put(`${this.apiUrl}/users/me`, updatedUser, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    }
+
+    return of(null);
   }
 
-  getAllUsers(page: number = 1, pageSize: number = 10): Observable<UsersResponse> {
+  getAllUsers(
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<UsersResponse> {
     return this.http.get<UsersResponse>(`${this.apiUrl}/users`, {
       params: {
         page: page.toString(),
-        pageSize: pageSize.toString()
-      }
+        pageSize: pageSize.toString(),
+      },
     });
   }
 

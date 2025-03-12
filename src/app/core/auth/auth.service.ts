@@ -51,6 +51,7 @@ export class AuthService {
 
   setCurrentUser(user: User | null): void {
     this.currentUserSubject.next(user);
+
   }
 
   registerUser(email: string, password: string) {

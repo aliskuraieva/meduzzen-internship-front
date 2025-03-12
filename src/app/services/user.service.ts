@@ -47,7 +47,7 @@ export class UserService {
       password: user.password || ''
     };
 
-    return this.apiService.updateUserProfile(id, updatedUser).pipe(
+    return this.apiService.updateUserProfile(updatedUser).pipe(
       map((response) => {
         const currentUser = this.currentUserSubject.getValue();
         if (currentUser && response.username) {

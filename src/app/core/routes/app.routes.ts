@@ -20,10 +20,12 @@ export const appRoutes: Routes = [
   {
     path: 'companies',
     loadChildren: () => import('../../domain/company/company.routes').then(m => m.companyRoutes),
+    canActivate: [AuthGuard]
   },
   {
     path: 'users',
     loadChildren: () => import('../../domain/user/user.routes').then(m => m.userRoutes),
+    canActivate: [AuthGuard]
   },
 
   { path: '**', redirectTo: '/about' }

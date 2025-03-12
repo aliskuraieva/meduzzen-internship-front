@@ -38,6 +38,7 @@ export class UserListComponent implements OnInit {
     this.apiService.getAllUsers(this.currentPage, this.pageSize).subscribe({
       next: (response: PaginationResponse) => {
         this.users = response.detail.users;
+        this.users.sort((a, b) => a.id - b.id);
         this.totalUsers = response.detail.total;
         this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
       },

@@ -17,8 +17,18 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit {
-  user: { username: string; email: string; id: number; picture?: string; createdAt?: string; updatedAt?: string } = { username: '', email: '', id: 0 };
-  originalUser: { username: string; email: string } = { username: '', email: '' };
+  user: {
+    username: string;
+    email: string;
+    id: number;
+    picture?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  } = { username: '', email: '', id: 0 };
+  originalUser: { username: string; email: string } = {
+    username: '',
+    email: '',
+  };
   isEditing = false;
   isAuthenticated$: Observable<boolean>;
   editedUser: { username: string; password?: string } = { username: '' };
@@ -28,7 +38,7 @@ export class UserProfileComponent implements OnInit {
     private apiService: ApiService,
     private authService: AuthService,
     private userService: UserService,
-    private router: Router,
+    private router: Router
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
@@ -45,7 +55,11 @@ export class UserProfileComponent implements OnInit {
       )
       .subscribe({
         next: (userData) => {
-          if (!userData || !userData.detail?.username || !userData.detail?.email) {
+          if (
+            !userData ||
+            !userData.detail?.username ||
+            !userData.detail?.email
+          ) {
             console.error('Invalid user data:', userData);
             return;
           }
@@ -65,20 +79,25 @@ export class UserProfileComponent implements OnInit {
   }
 
   saveProfile(): void {
-
-    const updatedUser: { username: string; password?: string } = { username: this.editedUser.username };
+    const updatedUser: { username: string; password?: string } = {
+      username: this.editedUser.username,
+    };
 
     if (this.editedUser.password?.trim()) {
       updatedUser.password = this.editedUser.password;
     }
 
-    this.apiService.updateUserProfile(this.user.id.toString(), updatedUser).subscribe({
+    this.apiService.updateUserProfile(updatedUser).subscribe({
       next: (updatedUserResponse) => {
+        console.log('Profile update response:', updatedUserResponse);
 
         if (updatedUserResponse?.detail?.username) {
           this.user.username = updatedUserResponse.detail.username;
           this.originalUser.username = updatedUserResponse.detail.username;
-          this.authService.setCurrentUser({ ...this.user, username: updatedUserResponse.detail.username });
+          this.authService.setCurrentUser({
+            ...this.user,
+            username: updatedUserResponse.detail.username,
+          });
 
           this.isEditing = false;
 
@@ -93,7 +112,6 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-
   cancelEdit(): void {
     this.editedUser = { username: this.originalUser.username };
     this.isEditing = false;
@@ -107,7 +125,7 @@ export class UserProfileComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting profile:', error);
-        }
+        },
       });
     }
   }
