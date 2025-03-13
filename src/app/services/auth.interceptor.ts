@@ -1,4 +1,4 @@
-import { inject, Injectable, Injector } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpEvent,
   HttpHandler,

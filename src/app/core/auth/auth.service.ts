@@ -21,7 +21,7 @@ export class AuthService {
   public currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
 
-    private http!: HttpClient
+    private http: HttpClient
 
   constructor(
     private auth0AuthService: Auth0AuthService,
@@ -32,7 +32,7 @@ export class AuthService {
   ) {
     this.http = new HttpClient(httpBackend);
     this.auth0AuthService.handleRedirectCallback().subscribe();
-    this.loadUserData();
+
   }
 
   loginWithAuth0(): void {

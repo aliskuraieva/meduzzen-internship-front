@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../services/api.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { switchMap } from 'rxjs/operators';
@@ -15,14 +15,18 @@ import { Observable } from 'rxjs';
 })
 export class UserDetailComponent implements OnInit {
   user: { username: string; email: string } = { username: '', email: '' };
-  originalUser: { username: string; email: string } = { username: '', email: '' };
+  originalUser: { username: string; email: string } = {
+    username: '',
+    email: '',
+  };
   isEditing = false;
   isAuthenticated$: Observable<boolean>;
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
@@ -32,12 +36,18 @@ export class UserDetailComponent implements OnInit {
       .pipe(
         switchMap((params) => {
           const userId = params.get('id');
-          return userId ? this.apiService.getUserById(userId) : this.apiService.getCurrentUser();
+          return userId
+            ? this.apiService.getUserById(userId)
+            : this.apiService.getCurrentUser();
         })
       )
       .subscribe({
         next: (userData) => {
-          if (!userData || !userData.detail?.username || !userData.detail?.email) {
+          if (
+            !userData ||
+            !userData.detail?.username ||
+            !userData.detail?.email
+          ) {
             console.error('Invalid user data:', userData);
             return;
           }
@@ -48,5 +58,8 @@ export class UserDetailComponent implements OnInit {
           console.error('Error fetching user data:', error);
         },
       });
+  }
+  goBack(): void {
+    this.router.navigate(['/users/list']);
   }
 }
