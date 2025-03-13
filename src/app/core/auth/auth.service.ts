@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { UserData } from '../interfaces/user.interface';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import { UserData, User } from '../interfaces/user.interface';
 import { Auth0AuthService } from './auth0-auth.service';
 import { UserRegistrationService } from '../../domain/user/components/user-registration/user-registration.service';
 import { UserAuthorizationService } from '../../domain/user/components/user-authorization/user-authorization.service';
@@ -13,17 +13,24 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private userSubject = new BehaviorSubject<UserData | null>(null);
+  private currentUserSubject: BehaviorSubject<User | null> =
+    new BehaviorSubject<User | null>(null);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private readonly apiUrl = import.meta.env['NG_APP_PUBLIC_API_URL'];
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  public currentUser$: Observable<User | null> =
+    this.currentUserSubject.asObservable();
+
+  private http: HttpClient;
 
   constructor(
     private auth0AuthService: Auth0AuthService,
     private userRegistrationService: UserRegistrationService,
     private userAuthorizationService: UserAuthorizationService,
-    private http: HttpClient,
+    httpBackend: HttpBackend,
     private router: Router
   ) {
+    this.http = new HttpClient(httpBackend);
     this.auth0AuthService.handleRedirectCallback().subscribe();
   }
 
@@ -40,10 +47,15 @@ export class AuthService {
     this.clearTokens();
     this.userSubject.next(null);
     this.isAuthenticatedSubject.next(false);
+    this.router.navigate(['/login']);
   }
 
   getUser(): Observable<UserData | null> {
     return this.userSubject.asObservable();
+  }
+
+  setCurrentUser(user: User | null): void {
+    this.currentUserSubject.next(user);
   }
 
   registerUser(email: string, password: string) {
@@ -69,6 +81,7 @@ export class AuthService {
 
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
+    console.log('Attempting refresh, refreshToken:', refreshToken);
     if (!refreshToken) {
       return of(null);
     }
@@ -76,6 +89,7 @@ export class AuthService {
       .post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken })
       .pipe(
         tap((response) => {
+          console.log('Token refresh response:', response);
           if (response?.data?.accessToken) {
             this.saveTokens(
               response.data.accessToken,
@@ -85,12 +99,15 @@ export class AuthService {
             this.loadUserData();
           }
         }),
-        catchError(() => of(null))
+        catchError((error) => {
+          return of(null);
+        })
       );
   }
 
   loadUserData(): void {
     const storedToken = this.getAccessToken();
+    console.log('loadUserData called, storedToken:', storedToken);
     if (storedToken) {
       this.loadUserFromApi(storedToken);
     } else {
@@ -98,7 +115,7 @@ export class AuthService {
     }
   }
 
-  private loadUserFromApi(storedToken: string): void {
+  loadUserFromApi(storedToken: string): void {
     this.http
       .get<UserData>(`${this.apiUrl}/auth/me`, {
         headers: { Authorization: `Bearer ${storedToken}` },
@@ -108,9 +125,14 @@ export class AuthService {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
+          } else {
+            this.isAuthenticatedSubject.next(false);
           }
         }),
-        catchError((error) => this.handleApiError(error))
+        catchError((error) => {
+          this.isAuthenticatedSubject.next(false);
+          return this.handleApiError(error);
+        })
       )
       .subscribe();
   }
@@ -145,9 +167,14 @@ export class AuthService {
   }
 
   private handleApiError(error: any): Observable<null> {
-    console.error('Error loading user data', error);
     if (error.status === 401) {
-      this.refreshAccessToken().subscribe(() => this.loadUserData());
+      this.refreshAccessToken().subscribe((newToken) => {
+        if (newToken) {
+          this.loadUserData();
+        } else {
+          this.logout();
+        }
+      });
     } else {
       this.clearTokens();
     }
@@ -155,7 +182,6 @@ export class AuthService {
   }
 
   private handleAuth0Error(error: any): Observable<null> {
-    console.error('Error loading user data from Auth0', error);
     this.clearTokens();
     return of(null);
   }
@@ -169,7 +195,7 @@ export class AuthService {
     }
   }
 
-  private getAccessToken(): string | null {
+  getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   }
 

@@ -9,7 +9,7 @@ import { provideAuth0 } from '@auth0/auth0-angular';
 import { provideToastr } from 'ngx-toastr';
 import { provideStore } from '@ngrx/store';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { appRoutes } from '../app/core/routes/app.routes';
+import { appRoutes } from './core/routes/app.routes';
 import { appReducer } from '../app/core/state/app.reducer';
 import { AuthInterceptor } from '../app/services/auth.interceptor';
 

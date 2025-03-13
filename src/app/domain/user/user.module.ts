@@ -5,6 +5,7 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
 import { UserAuthorizationComponent } from './components/user-authorization/user-authorization.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { UserDetailComponent } from './components/user-detail/user-detail.component';
 
 @NgModule({
   imports: [
@@ -13,6 +14,7 @@ import { UserListComponent } from './components/user-list/user-list.component';
     UserRegistrationComponent,
     UserAuthorizationComponent,
     UserProfileComponent,
+    UserDetailComponent,
     UserListComponent
   ]
 })

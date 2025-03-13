@@ -12,13 +12,35 @@ export const appRoutes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'health-check', component: HealthStatusComponent },
 
-  { path: 'register', component: UserRegistrationComponent, canActivate: [GuestGuard] },
-  { path: 'login', component: UserAuthorizationComponent, canActivate: [GuestGuard] },
+  {
+    path: 'register',
+    component: UserRegistrationComponent,
+    canActivate: [GuestGuard],
+  },
+  {
+    path: 'login',
+    component: UserAuthorizationComponent,
+    canActivate: [GuestGuard],
+  },
 
-  { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  {
+    path: 'profile',
+    component: UserProfileComponent,
+    canActivate: [AuthGuard],
+  },
 
-  { path: 'companies', loadChildren: () => import('../../domain/company/company.routes').then(m => m.companyRoutes) },
-  { path: 'users', loadChildren: () => import('../../domain/user/user.routes').then(m => m.userRoutes) },
+  {
+    path: 'companies',
+    loadChildren: () =>
+      import('../../domain/company/company.routes').then(
+        (m) => m.companyRoutes
+      ),
+  },
+  {
+    path: 'users',
+    loadChildren: () =>
+      import('../../domain/user/user.routes').then((m) => m.userRoutes),
+  },
 
-  { path: '**', redirectTo: '/about' }
+  { path: '**', redirectTo: '/about' },
 ];

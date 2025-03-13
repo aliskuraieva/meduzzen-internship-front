@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpEvent,
   HttpHandler,
@@ -18,12 +18,13 @@ export class AuthInterceptor implements HttpInterceptor {
     refreshToken: string;
   } | null>(null);
 
-  constructor(private authService: AuthService) {}
+  authService = inject(AuthService);
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+
     const accessToken = localStorage.getItem('access_token');
 
     const clonedReq = accessToken
@@ -61,15 +62,23 @@ export class AuthInterceptor implements HttpInterceptor {
           this.refreshTokenInProgress = false;
 
           if (newToken) {
-            localStorage.setItem('access_token', newToken.detail.data.accessToken);
-            localStorage.setItem('refresh_token', newToken.detail.data.refreshToken);
+            localStorage.setItem(
+              'access_token',
+              newToken.detail.data.accessToken
+            );
+            localStorage.setItem(
+              'refresh_token',
+              newToken.detail.data.refreshToken
+            );
             this.refreshTokenSubject.next({
               accessToken: newToken.detail.data.accessToken,
               refreshToken: newToken.detail.data.refreshToken,
             });
             return next.handle(
               req.clone({
-                setHeaders: { Authorization: `Bearer ${newToken.detail.data.accessToken}` },
+                setHeaders: {
+                  Authorization: `Bearer ${newToken.detail.data.accessToken}`,
+                },
               })
             );
           }

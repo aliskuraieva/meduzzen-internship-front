@@ -37,18 +37,19 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.authService.loadUserData();
 
-    this.authService.getUser().subscribe((user) => {
-      if (user) {
-        this.setUser(user, 'AuthService');
-      } else {
-        console.warn('No user data received from AuthService');
+    this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (isAuthenticated) {
+        this.authService.getUser().subscribe((user) => {
+          if (user) {
+            this.setUser(user, 'AuthService');
+          }
+        });
       }
     });
   }
 
   private setUser(user: UserData, source: string): void {
     if (!user) {
-      console.error(`No user data from ${source}`);
       return;
     }
 

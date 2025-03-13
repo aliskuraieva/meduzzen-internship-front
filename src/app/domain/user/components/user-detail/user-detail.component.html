@@ -1,0 +1,19 @@
+<div class="profile-wrapper">
+  <button (click)="goBack()" class="back-button">← Back</button>
+
+  <div *ngIf="!isEditing" class="profile-container">
+    <div *ngIf="user?.picture; else noAvatar">
+      <img [src]="user.picture" alt="User Avatar" class="user-avatar" />
+    </div>
+    <ng-template #noAvatar>
+      <div class="user-avatar-placeholder">
+        {{ user?.username ? user.username.charAt(0).toUpperCase() : "?" }}
+      </div>
+    </ng-template>
+    <p><strong>ID:</strong> {{ user?.id }}</p>
+    <p><strong>Name:</strong> {{ user?.username }}</p>
+    <p><strong>Email:</strong> {{ user?.email }}</p>
+    <p><strong>Created At:</strong> {{ user?.createdAt | date : "medium" }}</p>
+    <p><strong>Updated At:</strong> {{ user?.updatedAt | date : "medium" }}</p>
+  </div>
+</div>

@@ -2,8 +2,9 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  createdAt: string;
-  updatedAt: string;
+  password?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Auth0User {
@@ -30,4 +31,11 @@ export interface UsersResponse {
   status_code: number;
   result: string;
   detail: UsersDetail;
+}
+
+export interface PaginationResponse {
+  detail: {
+    users: User[];
+    total: number;
+  };
 }
