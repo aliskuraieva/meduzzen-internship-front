@@ -21,7 +21,7 @@ export class AuthService {
   public currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
 
-    private http: HttpClient
+  private http: HttpClient;
 
   constructor(
     private auth0AuthService: Auth0AuthService,
@@ -32,7 +32,6 @@ export class AuthService {
   ) {
     this.http = new HttpClient(httpBackend);
     this.auth0AuthService.handleRedirectCallback().subscribe();
-
   }
 
   loginWithAuth0(): void {
@@ -130,7 +129,6 @@ export class AuthService {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
-
           } else {
             this.isAuthenticatedSubject.next(false);
           }
@@ -207,7 +205,7 @@ export class AuthService {
     }
   }
 
-  private getAccessToken(): string | null {
+  getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   }
 
