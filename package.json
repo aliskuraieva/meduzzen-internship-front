@@ -21,7 +21,6 @@
     "@ngrx/entity": "^19.0.0",
     "@ngrx/store": "^19.0.0",
     "@ngrx/store-devtools": "^19.0.0",
-    "bcryptjs": "^3.0.2",
     "jwt-decode": "^4.0.0",
     "modern-normalize": "^3.0.1",
     "ngx-toastr": "^19.0.0",

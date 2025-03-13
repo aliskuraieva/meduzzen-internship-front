@@ -43,7 +43,6 @@ export class AuthService {
   }
 
   logout(): void {
-    console.warn('Logout triggered');
     this.auth0AuthService.logout();
     this.clearTokens();
     this.userSubject.next(null);
@@ -84,7 +83,6 @@ export class AuthService {
     const refreshToken = this.getRefreshToken();
     console.log('Attempting refresh, refreshToken:', refreshToken);
     if (!refreshToken) {
-      console.warn('No refresh token found, cannot refresh');
       return of(null);
     }
     return this.http
@@ -102,7 +100,6 @@ export class AuthService {
           }
         }),
         catchError((error) => {
-          console.error('Error refreshing token:', error);
           return of(null);
         })
       );
@@ -114,7 +111,6 @@ export class AuthService {
     if (storedToken) {
       this.loadUserFromApi(storedToken);
     } else {
-      console.warn('No stored token found, trying Auth0 login');
       this.loadUserFromAuth0();
     }
   }
@@ -134,7 +130,6 @@ export class AuthService {
           }
         }),
         catchError((error) => {
-          console.error('Error in loadUserFromApi:', error);
           this.isAuthenticatedSubject.next(false);
           return this.handleApiError(error);
         })
@@ -172,9 +167,7 @@ export class AuthService {
   }
 
   private handleApiError(error: any): Observable<null> {
-    console.error('handleApiError called:', error);
     if (error.status === 401) {
-      console.warn('401 error detected, attempting token refresh');
       this.refreshAccessToken().subscribe((newToken) => {
         if (newToken) {
           this.loadUserData();
@@ -183,14 +176,12 @@ export class AuthService {
         }
       });
     } else {
-      console.error('Clearing tokens due to non-401 error');
       this.clearTokens();
     }
     return of(null);
   }
 
   private handleAuth0Error(error: any): Observable<null> {
-    console.error('Error loading user data from Auth0', error);
     this.clearTokens();
     return of(null);
   }
@@ -199,7 +190,6 @@ export class AuthService {
     if (user) {
       this.userSubject.next(user);
       this.isAuthenticatedSubject.next(true);
-      localStorage.setItem('userId', user.id?.toString() || '');
     } else {
       this.isAuthenticatedSubject.next(false);
     }
@@ -219,7 +209,6 @@ export class AuthService {
   }
 
   private clearTokens(): void {
-    console.warn('Clearing tokens');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
   }
