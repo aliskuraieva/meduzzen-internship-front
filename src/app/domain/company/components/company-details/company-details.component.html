@@ -1,0 +1,40 @@
+<div *ngIf="company">
+  <button (click)="goBack()" class="go-back-button">← Back</button>
+
+  <div class="company-info">
+    <div>
+      <label for="companyName">Company Name:</label>
+      <input
+        id="companyName"
+        [(ngModel)]="company.name"
+        [readonly]="!isOwner"
+      />
+    </div>
+    <div>
+      <label for="companyDescription">Description:</label>
+      <textarea
+        id="companyDescription"
+        [(ngModel)]="company.description"
+        [readonly]="!isOwner"
+      ></textarea>
+    </div>
+    <div>
+      <label for="companyVisibility">Visibility:</label>
+      <label class="switch">
+        <input
+          type="checkbox"
+          [(ngModel)]="company.visibility"
+          (change)="toggleVisibility()"
+          [disabled]="!isOwner"
+        />
+        <span class="slider"></span>
+      </label>
+      <span>{{ company.visibility ? "Visible" : "Hidden" }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="isOwner">
+    <button (click)="updateCompany()">Save Changes</button>
+    <button (click)="deleteCompany()">Delete Company</button>
+  </div>
+</div>

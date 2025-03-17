@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CompanyProfileComponent } from './company-profile.component';
+import { CompanyProfileComponent } from './create-company-modal.component';
 
 describe('CompanyProfileComponent', () => {
   let component: CompanyProfileComponent;

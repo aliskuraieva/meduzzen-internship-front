@@ -1,0 +1,74 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="exampleModalLabel">Create Company</h5>
+  <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Company Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        formControlName="name"
+        placeholder="Enter company name"
+      />
+      <div
+        *ngIf="
+          companyForm.get('name')?.invalid && companyForm.get('name')?.touched
+        "
+        class="text-danger"
+      >
+        <small *ngIf="companyForm.get('name')?.errors?.['required']"
+          >Company name is required.</small
+        >
+        <small *ngIf="companyForm.get('name')?.errors?.['maxlength']"
+          >Name can't be longer than 100 characters.</small
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        class="form-control"
+        id="description"
+        formControlName="description"
+        rows="3"
+        placeholder="Enter company description"
+      ></textarea>
+      <div
+        *ngIf="
+          companyForm.get('description')?.invalid &&
+          companyForm.get('description')?.touched
+        "
+        class="text-danger"
+      >
+        <small *ngIf="companyForm.get('description')?.errors?.['required']"
+          >Description is required.</small
+        >
+        <small *ngIf="companyForm.get('description')?.errors?.['maxlength']"
+          >Description can't be longer than 500 characters.</small
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="isVisible">Visibility</label>
+      <select class="form-control" id="isVisible" formControlName="isVisible">
+        <option [ngValue]="true">Visible</option>
+        <option [ngValue]="false">Hidden</option>
+      </select>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="companyForm.invalid"
+    >
+      Create Company
+    </button>
+  </form>
+</div>

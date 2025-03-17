@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { UsersResponse } from '../core/interfaces/user.interface';
+import {
+  Company,
+  CompaniesResponse,
+} from '../core/interfaces/company.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -16,16 +20,53 @@ export class ApiService {
     private notificationService: NotificationService
   ) {}
 
-  getCompanyById(id: string): Observable<any> {
+  getCompanyById(id: number): Observable<Company> {
     return this.http
-      .get<any>(`${this.apiUrl}/companies/${id}`)
+      .get<Company>(`${this.apiUrl}/companies/${id}`)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  getAllCompanies(): Observable<any[]> {
+  getAllCompanies(
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<CompaniesResponse> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<CompaniesResponse>(`${this.apiUrl}/companies`, {
+      params,
+    });
+  }
+
+  createCompany(company: Partial<Company>): Observable<Company> {
     return this.http
-      .get<any[]>(`${this.apiUrl}/companies`)
+      .post<Company>(`${this.apiUrl}/companies`, company)
       .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  updateCompany(id: number, company: Partial<Company>): Observable<Company> {
+    return this.http
+      .put<Company>(`${this.apiUrl}/companies/${id}`, company)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  deleteCompany(id: number): Observable<void> {
+    return this.http
+      .delete<void>(`${this.apiUrl}/companies/${id}`)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  updateVisibility(id: number, isVisible: boolean): Observable<Company> {
+    const token = localStorage.getItem('access_token');
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.patch<Company>(
+      `${this.apiUrl}/companies/${id}/visibility`,
+      { isVisible },
+      { headers }
+    );
   }
 
   getUserById(id: string): Observable<any> {
