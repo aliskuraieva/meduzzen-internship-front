@@ -26,21 +26,23 @@ export class CompanyListComponent implements OnInit {
   }
 
   fetchCompanies(): void {
-    this.companyService
-      .getAllCompanies(this.currentPage, this.pageSize)
-      .subscribe({
-        next: (response) => {
+    this.companyService.getAllCompanies(this.currentPage, this.pageSize).subscribe({
+      next: (response) => {
+        console.log('API response:', response);
+        if (response && response.companies) {
           this.companies = response.companies;
           this.totalCompanies = response.total;
           this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
-        },
-        error: (error) => {
-          this.errorMessage =
-            'Error fetching companies data. Please try again later.';
-          console.error('Error fetching companies data:', error);
-        },
-      });
+        } else {
+          console.error('API response does not have "companies" field');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching companies:', err);
+      },
+    });
   }
+
 
   goToCompanyProfile(companyId: number): void {
     this.router.navigate(['/companies/profile', companyId]);

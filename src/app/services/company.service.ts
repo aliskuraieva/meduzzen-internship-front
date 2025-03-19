@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import {
-  Company,
-  CompaniesResponse,
-} from '../core/interfaces/company.interface';
 import { NotificationService } from './notification.service';
 import { catchError, map, tap } from 'rxjs/operators';
-import { CompaniesDetail } from '../core/interfaces/company.interface';
+import { Company, CompaniesDetail } from '../core/interfaces/company.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +22,7 @@ export class CompanyService {
     pageSize: number = 10
   ): Observable<CompaniesDetail> {
     return this.apiService.getAllCompanies(page, pageSize).pipe(
-      map((response: CompaniesResponse) => response.detail),
+      map((response: CompaniesDetail) => response),
       catchError((error) => {
         this.notificationService.error('Error fetching companies');
         return throwError(() => error);
@@ -36,6 +32,7 @@ export class CompanyService {
 
   getCompanyById(id: number): Observable<Company> {
     return this.apiService.getCompanyById(id).pipe(
+      map((company: Company) => company),
       catchError((error) => {
         this.notificationService.error('Error fetching company');
         return throwError(() => error);
@@ -115,8 +112,8 @@ export class CompanyService {
   }
 
   setPagination(page: number, pageSize: number): void {
-    this.getAllCompanies(page, pageSize).subscribe((response) => {
-      this.companiesSubject.next(response.companies);
+    this.getAllCompanies(page, pageSize).subscribe((data) => {
+      this.companiesSubject.next(data.companies);
     });
   }
 

@@ -1,40 +1,72 @@
-<div *ngIf="company">
+<div class="company-wrapper">
   <button (click)="goBack()" class="go-back-button">← Back</button>
 
-  <div class="company-info">
-    <div>
-      <label for="companyName">Company Name:</label>
-      <input
-        id="companyName"
-        [(ngModel)]="company.name"
-        [readonly]="!isOwner"
-      />
-    </div>
-    <div>
-      <label for="companyDescription">Description:</label>
-      <textarea
-        id="companyDescription"
-        [(ngModel)]="company.description"
-        [readonly]="!isOwner"
-      ></textarea>
-    </div>
-    <div>
-      <label for="companyVisibility">Visibility:</label>
-      <label class="switch">
-        <input
-          type="checkbox"
-          [(ngModel)]="company.visibility"
-          (change)="toggleVisibility()"
-          [disabled]="!isOwner"
-        />
-        <span class="slider"></span>
-      </label>
-      <span>{{ company.visibility ? "Visible" : "Hidden" }}</span>
+  <div *ngIf="!isEditing" class="company-container">
+    <p><strong>ID:</strong> {{ company?.id }}</p>
+    <p><strong>Name:</strong> {{ company?.name }}</p>
+    <p><strong>Description:</strong> {{ company?.description }}</p>
+    <p>
+      <strong>Visibility:</strong>
+      {{ company?.isVisible ? "Visible" : "Hidden" }}
+    </p>
+    <p><strong>Created At:</strong> {{ company?.createdAt | date }}</p>
+    <p><strong>Updated At:</strong> {{ company?.updatedAt | date }}</p>
+
+    <div *ngIf="isOwner" class="owner-actions-container">
+      <button class="edit-company-button" (click)="editCompany()">Edit</button>
+      <button class="delete-company-button" (click)="deleteCompany()">
+        Delete
+      </button>
     </div>
   </div>
 
-  <div *ngIf="isOwner">
-    <button (click)="updateCompany()">Save Changes</button>
-    <button (click)="deleteCompany()">Delete Company</button>
+  <div *ngIf="isEditing" class="form-container">
+    <form (ngSubmit)="saveCompany()" method="patch">
+      <div class="company-info">
+        <div>
+          <label for="companyName">Company Name:</label>
+          <input
+            id="companyName"
+            [(ngModel)]="company.name"
+            name="companyName"
+            required
+            [readonly]="!isOwner"
+          />
+        </div>
+        <div>
+          <label for="companyDescription">Description:</label>
+          <textarea
+            id="companyDescription"
+            [(ngModel)]="company.description"
+            name="companyDescription"
+            [readonly]="!isOwner"
+          ></textarea>
+        </div>
+        <div>
+          <label for="companyVisibility">Visibility:</label>
+          <label class="switch">
+            <input
+              type="checkbox"
+              [(ngModel)]="company.isVisible"
+              (change)="toggleVisibility()"
+              [disabled]="!isOwner"
+            />
+            <span class="slider"></span>
+          </label>
+          <span>{{ company.isVisible ? "Visible" : "Hidden" }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="isOwner" class="owner-actions-container">
+        <button type="submit" class="save-changes-button">Save Changes</button>
+        <button
+          type="button"
+          class="delete-company-button"
+          (click)="deleteCompany()"
+        >
+          Delete Company
+        </button>
+      </div>
+    </form>
   </div>
 </div>

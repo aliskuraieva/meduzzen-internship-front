@@ -55,6 +55,7 @@ export class AuthService {
   }
 
   setCurrentUser(user: User | null): void {
+    console.log('Setting current user:', user);
     this.currentUserSubject.next(user);
   }
 
@@ -107,7 +108,6 @@ export class AuthService {
 
   loadUserData(): void {
     const storedToken = this.getAccessToken();
-    console.log('loadUserData called, storedToken:', storedToken);
     if (storedToken) {
       this.loadUserFromApi(storedToken);
     } else {
@@ -125,12 +125,15 @@ export class AuthService {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
+            this.setCurrentUser(user.detail as User);
           } else {
             this.isAuthenticatedSubject.next(false);
+            this.setCurrentUser(null);
           }
         }),
         catchError((error) => {
           this.isAuthenticatedSubject.next(false);
+          this.setCurrentUser(null);
           return this.handleApiError(error);
         })
       )
@@ -190,8 +193,10 @@ export class AuthService {
     if (user) {
       this.userSubject.next(user);
       this.isAuthenticatedSubject.next(true);
+      this.setCurrentUser(user.detail as User);
     } else {
       this.isAuthenticatedSubject.next(false);
+      this.setCurrentUser(null);
     }
   }
 

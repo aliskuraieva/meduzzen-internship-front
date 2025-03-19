@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CompanyService } from '../../../../services/company.service';
 import { Company } from '../../../../core/interfaces/company.interface';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-company-details',
@@ -19,7 +21,8 @@ export class CompanyDetailsComponent implements OnInit {
   constructor(
     private companyService: CompanyService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -28,45 +31,62 @@ export class CompanyDetailsComponent implements OnInit {
   }
 
   fetchCompanyDetails(companyId: number): void {
-    this.companyService.getCompanyById(companyId).subscribe({
-      next: (company) => {
+    console.log('Fetching company details...');
+
+    combineLatest([
+      this.authService.currentUser$,
+      this.companyService.getCompanyById(companyId),
+    ]).subscribe({
+      next: ([currentUser, company]) => {
+        console.log('Company:', company);
+        console.log('Current User:', currentUser);
+
         this.company = company;
-        this.isOwner = this.checkIfOwner(Number(company.ownerId));
+        if (currentUser && company) {
+          this.isOwner = currentUser.id === company.owner.id;
+
+          console.log('Is Owner after check:', this.isOwner);
+        }
+
       },
     });
   }
 
-  checkIfOwner(ownerId: number): boolean {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser')!);
-    return currentUser?.id === ownerId;
-  }
-
   toggleVisibility(): void {
-    if (this.company) {
+    if (this.company && this.isOwner) {
       const newVisibility = !this.company.visibility;
       this.companyService
         .updateCompany(this.company.id, { visibility: newVisibility })
         .subscribe({
           next: (updatedCompany) => {
             this.company = updatedCompany;
+            console.log('Company visibility updated:', updatedCompany);
           },
         });
+    } else {
+      console.log('User is not the owner, cannot update visibility');
     }
   }
 
   deleteCompany(): void {
-    if (this.company) {
+    if (this.company && this.isOwner) {
       this.companyService.deleteCompany(this.company.id).subscribe({
         next: () => {
+          console.log('Company deleted successfully');
           this.router.navigate(['/companies']);
         },
       });
+    } else {
+      console.log('User is not the owner, cannot delete company');
     }
   }
 
   editCompany(): void {
     if (this.isOwner) {
       this.isEditing = true;
+      console.log('Editing mode activated');
+    } else {
+      console.log('User is not the owner, cannot edit company');
     }
   }
 
@@ -83,17 +103,14 @@ export class CompanyDetailsComponent implements OnInit {
           next: (updatedCompany) => {
             this.company = updatedCompany;
             this.isEditing = false;
+            console.log('Company updated successfully:', updatedCompany);
           },
         });
     }
   }
 
-  cancelEditing(): void {
-    this.isEditing = false;
-    this.fetchCompanyDetails(this.company!.id);
-  }
-
   goBack(): void {
     this.router.navigate(['/companies/list']);
+    console.log('Navigating back to company list');
   }
 }

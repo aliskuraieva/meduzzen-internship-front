@@ -41,7 +41,7 @@ export class CreateCompanyModalComponent {
           this.companyCreated.emit(company);
           this.toastr.success('Company created successfully');
           this.companyForm.reset();
-          this.router.navigate(['/companies/profile', company.id]); // Use company.id instead of companyId
+          this.router.navigate(['/companies']);
         },
         error: () => {
           this.toastr.error('Failed to create company');

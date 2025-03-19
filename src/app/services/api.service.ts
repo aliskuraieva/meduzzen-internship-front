@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, of, map } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { UsersResponse } from '../core/interfaces/user.interface';
 import {
   Company,
-  CompaniesResponse,
+  BaseResponse,
+  CompaniesDetail,
 } from '../core/interfaces/company.interface';
 
 @Injectable({
@@ -22,21 +23,29 @@ export class ApiService {
 
   getCompanyById(id: number): Observable<Company> {
     return this.http
-      .get<Company>(`${this.apiUrl}/companies/${id}`)
-      .pipe(catchError((error) => this.handleError(error)));
+      .get<BaseResponse<Company>>(`${this.apiUrl}/companies/${id}`)
+      .pipe(
+        map((response) => response.detail),
+        catchError((error) => this.handleError(error))
+      );
   }
 
   getAllCompanies(
     page: number = 1,
     pageSize: number = 10
-  ): Observable<CompaniesResponse> {
+  ): Observable<CompaniesDetail> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    return this.http.get<CompaniesResponse>(`${this.apiUrl}/companies`, {
-      params,
-    });
+    return this.http
+      .get<BaseResponse<CompaniesDetail>>(`${this.apiUrl}/companies`, {
+        params,
+      })
+      .pipe(
+        map((response) => response.detail),
+        catchError((error) => this.handleError(error))
+      );
   }
 
   createCompany(company: Partial<Company>): Observable<Company> {
