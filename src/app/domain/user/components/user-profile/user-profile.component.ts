@@ -60,15 +60,11 @@ export class UserProfileComponent implements OnInit {
             !userData.detail?.username ||
             !userData.detail?.email
           ) {
-            console.error('Invalid user data:', userData);
             return;
           }
 
           this.user = { ...userData.detail };
           this.originalUser = { ...userData.detail };
-        },
-        error: (error) => {
-          console.error('Error fetching user data:', error);
         },
       });
   }
@@ -89,8 +85,6 @@ export class UserProfileComponent implements OnInit {
 
     this.apiService.updateUserProfile(updatedUser).subscribe({
       next: (updatedUserResponse) => {
-        console.log('Profile update response:', updatedUserResponse);
-
         if (updatedUserResponse?.detail?.username) {
           this.user.username = updatedUserResponse.detail.username;
           this.originalUser.username = updatedUserResponse.detail.username;
@@ -102,12 +96,7 @@ export class UserProfileComponent implements OnInit {
           this.isEditing = false;
 
           this.router.navigate(['/users/profile']);
-        } else {
-          console.error('Invalid response format:', updatedUserResponse);
         }
-      },
-      error: (error) => {
-        console.error('Error updating profile:', error);
       },
     });
   }
@@ -122,9 +111,6 @@ export class UserProfileComponent implements OnInit {
       this.userService.deleteUser().subscribe({
         next: () => {
           this.router.navigate(['/about']);
-        },
-        error: (error) => {
-          console.error('Error deleting profile:', error);
         },
       });
     }

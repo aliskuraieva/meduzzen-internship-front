@@ -1,10 +1,10 @@
-import { User } from "./user.interface";
+import { User } from './user.interface';
 
 export interface Company {
   id: number;
   name: string;
   description: string;
-  visibility: boolean;
+  isVisible: boolean;
   owner: User;
   createdAt: string;
   updatedAt: string;
@@ -15,12 +15,6 @@ export interface CompaniesDetail {
   pageSize: number;
   total: number;
   companies: Company[];
-}
-
-export interface CompaniesResponse {
-  status_code: number;
-  result: string;
-  detail: CompaniesDetail;
 }
 
 export interface BaseResponse<T> {

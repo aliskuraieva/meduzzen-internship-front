@@ -1,9 +1,10 @@
-<div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-
-<div *ngIf="companies.length === 0">No companies found</div>
+@if(errorMessage) {
+<div class="error-message">{{ errorMessage }}</div>
+} @if(companies.length === 0) { No companies found }
 
 <div class="company-list-container">
-  <div *ngFor="let company of companies" class="company-item">
+  @for( company of companies; track company.id) {
+  <div class="company-item">
     <div class="company-info">
       <div class="company-name">{{ company.name }}</div>
       <div class="company-description">{{ company.description }}</div>
@@ -11,20 +12,38 @@
     <div class="company-actions">
       <div class="visibility-toggle">
         <label class="switch">
-          <input type="checkbox" [(ngModel)]="company.visibility" (change)="toggleVisibility(company)" />
+          <input
+            type="checkbox"
+            [(ngModel)]="company.isVisible"
+            (change)="toggleVisibility(company)"
+            [class.active]="company.isVisible"
+          />
           <span class="slider"></span>
         </label>
         <span class="visibility-label">
-          {{ company.visibility ? 'Visible' : 'Hidden' }}
+          {{ company.isVisible ? "Visible" : "Hidden" }}
         </span>
       </div>
       <button (click)="goToCompanyProfile(company.id)">View Profile</button>
     </div>
   </div>
+  }
 </div>
 
-<div *ngIf="totalCompanies > pageSize" class="pagination">
-  <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+@if(totalCompanies > pageSize) {
+<div class="pagination">
+  <button
+    (click)="onPageChange(currentPage - 1)"
+    [disabled]="currentPage === 1"
+  >
+    Previous
+  </button>
   <span>Page {{ currentPage }} of {{ totalPages }}</span>
-  <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages">Next</button>
+  <button
+    (click)="onPageChange(currentPage + 1)"
+    [disabled]="currentPage >= totalPages"
+  >
+    Next
+  </button>
 </div>
+}

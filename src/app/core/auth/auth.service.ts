@@ -55,7 +55,6 @@ export class AuthService {
   }
 
   setCurrentUser(user: User | null): void {
-    console.log('Setting current user:', user);
     this.currentUserSubject.next(user);
   }
 
@@ -82,7 +81,6 @@ export class AuthService {
 
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
-    console.log('Attempting refresh, refreshToken:', refreshToken);
     if (!refreshToken) {
       return of(null);
     }
@@ -90,7 +88,6 @@ export class AuthService {
       .post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken })
       .pipe(
         tap((response) => {
-          console.log('Token refresh response:', response);
           if (response?.data?.accessToken) {
             this.saveTokens(
               response.data.accessToken,

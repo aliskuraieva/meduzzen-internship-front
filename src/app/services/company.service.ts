@@ -57,22 +57,22 @@ export class CompanyService {
   }
 
   updateCompany(id: number, company: Partial<Company>): Observable<Company> {
-    return this.apiService.updateCompany(id, company).pipe(
-      tap((updatedCompany) => {
-        const companies = this.companiesSubject.getValue();
-        const companyIndex = companies.findIndex((comp) => comp.id === id);
-        if (companyIndex !== -1) {
-          companies[companyIndex] = updatedCompany;
-          this.companiesSubject.next(companies);
-        }
-        this.notificationService.success('Company updated successfully');
-      }),
-      catchError((error) => {
-        this.notificationService.error('Error updating company');
-        return throwError(() => error);
-      })
-    );
-  }
+  return this.apiService.updateCompany(id, company).pipe(
+    tap((updatedCompany) => {
+      const companies = this.companiesSubject.getValue();
+      const companyIndex = companies.findIndex((comp) => comp.id === id);
+      if (companyIndex !== -1) {
+        companies[companyIndex] = updatedCompany;
+        this.companiesSubject.next(companies);
+      }
+      this.notificationService.success('Company updated successfully');
+    }),
+    catchError((error) => {
+      this.notificationService.error('Error updating company');
+      return throwError(() => error);
+    })
+  );
+}
 
   deleteCompany(id: number): Observable<void> {
     return this.apiService.deleteCompany(id).pipe(

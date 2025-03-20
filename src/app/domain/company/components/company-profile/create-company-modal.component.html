@@ -15,19 +15,16 @@
         formControlName="name"
         placeholder="Enter company name"
       />
-      <div
-        *ngIf="
-          companyForm.get('name')?.invalid && companyForm.get('name')?.touched
-        "
-        class="text-danger"
-      >
-        <small *ngIf="companyForm.get('name')?.errors?.['required']"
-          >Company name is required.</small
-        >
-        <small *ngIf="companyForm.get('name')?.errors?.['maxlength']"
-          >Name can't be longer than 100 characters.</small
-        >
+      @if(companyForm.get('name')?.invalid && companyForm.get('name')?.touched)
+      {
+      <div class="text-danger">
+        @if(companyForm.get('name')?.errors?.['required']) {
+        <small>Company name is required.</small>
+        } @if(companyForm.get('name')?.errors?.['maxlength']) {
+        <small>Name can't be longer than 100 characters.</small>
+        }
       </div>
+      }
     </div>
 
     <div class="form-group">
@@ -39,20 +36,16 @@
         rows="3"
         placeholder="Enter company description"
       ></textarea>
-      <div
-        *ngIf="
-          companyForm.get('description')?.invalid &&
-          companyForm.get('description')?.touched
-        "
-        class="text-danger"
-      >
-        <small *ngIf="companyForm.get('description')?.errors?.['required']"
-          >Description is required.</small
-        >
-        <small *ngIf="companyForm.get('description')?.errors?.['maxlength']"
-          >Description can't be longer than 500 characters.</small
-        >
+      @if(companyForm.get('description')?.invalid &&
+      companyForm.get('description')?.touched) {
+      <div class="text-danger">
+        @if(companyForm.get('description')?.errors?.['required']) {
+        <small>Description is required.</small>
+        } @if(companyForm.get('description')?.errors?.['maxlength']) {
+        <small>Description can't be longer than 500 characters.</small>
+        }
       </div>
+      }
     </div>
 
     <div class="form-group">

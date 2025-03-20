@@ -53,4 +53,5 @@ export class CreateCompanyModalComponent {
   closeModal() {
     this.companyForm.reset();
   }
+
 }

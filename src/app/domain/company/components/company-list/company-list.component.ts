@@ -26,23 +26,18 @@ export class CompanyListComponent implements OnInit {
   }
 
   fetchCompanies(): void {
-    this.companyService.getAllCompanies(this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
-        console.log('API response:', response);
-        if (response && response.companies) {
-          this.companies = response.companies;
-          this.totalCompanies = response.total;
-          this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
-        } else {
-          console.error('API response does not have "companies" field');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching companies:', err);
-      },
-    });
+    this.companyService
+      .getAllCompanies(this.currentPage, this.pageSize)
+      .subscribe({
+        next: (response) => {
+          if (response && response.companies) {
+            this.companies = response.companies;
+            this.totalCompanies = response.total;
+            this.totalPages = Math.ceil(this.totalCompanies / this.pageSize);
+          }
+        },
+      });
   }
-
 
   goToCompanyProfile(companyId: number): void {
     this.router.navigate(['/companies/profile', companyId]);
@@ -54,13 +49,10 @@ export class CompanyListComponent implements OnInit {
   }
 
   toggleVisibility(company: Company): void {
-    const newVisibility = !company.visibility;
+    const newVisibility = !company.isVisible;
     this.companyService.updateVisibility(company.id, newVisibility).subscribe({
       next: (updatedCompany) => {
-        company.visibility = updatedCompany.visibility;
-      },
-      error: (error) => {
-        console.error('Error updating visibility:', error);
+        company.isVisible = updatedCompany.isVisible;
       },
     });
   }

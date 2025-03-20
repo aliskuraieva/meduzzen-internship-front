@@ -56,7 +56,7 @@ export class ApiService {
 
   updateCompany(id: number, company: Partial<Company>): Observable<Company> {
     return this.http
-      .put<Company>(`${this.apiUrl}/companies/${id}`, company)
+      .patch<Company>(`${this.apiUrl}/companies/${id}`, company)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
