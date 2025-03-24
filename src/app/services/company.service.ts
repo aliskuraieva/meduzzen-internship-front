@@ -3,7 +3,7 @@ import { ApiService } from './api.service';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Company, CompaniesDetail } from '../core/interfaces/company.interface';
+import { Company, CompaniesDetail, BaseResponse } from '../core/interfaces/company.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -56,23 +56,24 @@ export class CompanyService {
     );
   }
 
-  updateCompany(id: number, company: Partial<Company>): Observable<Company> {
-  return this.apiService.updateCompany(id, company).pipe(
-    tap((updatedCompany) => {
-      const companies = this.companiesSubject.getValue();
-      const companyIndex = companies.findIndex((comp) => comp.id === id);
-      if (companyIndex !== -1) {
-        companies[companyIndex] = updatedCompany;
-        this.companiesSubject.next(companies);
-      }
-      this.notificationService.success('Company updated successfully');
-    }),
-    catchError((error) => {
-      this.notificationService.error('Error updating company');
-      return throwError(() => error);
-    })
-  );
-}
+  updateCompany(id: number, company: Partial<Company>): Observable<BaseResponse<Company>> {
+    return this.apiService.updateCompany(id, company).pipe(
+      tap((response) => {
+        const companies = this.companiesSubject.getValue();
+        const companyIndex = companies.findIndex((comp) => comp.id === id);
+        if (companyIndex !== -1) {
+          companies[companyIndex] = response.detail;
+          this.companiesSubject.next(companies);
+        }
+        this.notificationService.success('Company updated successfully');
+      }),
+      catchError((error) => {
+        this.notificationService.error('Error updating company');
+        return throwError(() => error);
+      })
+    );
+  }
+
 
   deleteCompany(id: number): Observable<void> {
     return this.apiService.deleteCompany(id).pipe(

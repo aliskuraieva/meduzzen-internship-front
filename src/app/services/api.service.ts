@@ -54,10 +54,9 @@ export class ApiService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  updateCompany(id: number, company: Partial<Company>): Observable<Company> {
-    return this.http
-      .patch<Company>(`${this.apiUrl}/companies/${id}`, company)
-      .pipe(catchError((error) => this.handleError(error)));
+  updateCompany(id: number, company: Partial<Company>): Observable<BaseResponse<Company>> {
+    console.log('PATCH запит:', id, company);
+    return this.http.patch<BaseResponse<Company>>(`${this.apiUrl}/companies/${id}`, company);
   }
 
   deleteCompany(id: number): Observable<void> {
