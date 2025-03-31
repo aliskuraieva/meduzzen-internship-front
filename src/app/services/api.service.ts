@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError, of, map } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { NotificationService } from './notification.service';
 import { UsersResponse } from '../core/interfaces/user.interface';
+import {
+  Company,
+  BaseResponse,
+  CompaniesDetail,
+} from '../core/interfaces/company.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -16,16 +21,60 @@ export class ApiService {
     private notificationService: NotificationService
   ) {}
 
-  getCompanyById(id: string): Observable<any> {
+  getCompanyById(id: number): Observable<Company> {
     return this.http
-      .get<any>(`${this.apiUrl}/companies/${id}`)
+      .get<BaseResponse<Company>>(`${this.apiUrl}/companies/${id}`)
+      .pipe(
+        map((response) => response.detail),
+        catchError((error) => this.handleError(error))
+      );
+  }
+
+  getAllCompanies(
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<CompaniesDetail> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http
+      .get<BaseResponse<CompaniesDetail>>(`${this.apiUrl}/companies`, {
+        params,
+      })
+      .pipe(
+        map((response) => response.detail),
+        catchError((error) => this.handleError(error))
+      );
+  }
+
+  createCompany(company: Partial<Company>): Observable<Company> {
+    return this.http
+      .post<Company>(`${this.apiUrl}/companies`, company)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  getAllCompanies(): Observable<any[]> {
+  updateCompany(id: number, company: Partial<Company>): Observable<BaseResponse<Company>> {
+    console.log('PATCH запит:', id, company);
+    return this.http.patch<BaseResponse<Company>>(`${this.apiUrl}/companies/${id}`, company);
+  }
+
+  deleteCompany(id: number): Observable<void> {
     return this.http
-      .get<any[]>(`${this.apiUrl}/companies`)
+      .delete<void>(`${this.apiUrl}/companies/${id}`)
       .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  updateVisibility(id: number, isVisible: boolean): Observable<Company> {
+    const token = localStorage.getItem('access_token');
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.patch<Company>(
+      `${this.apiUrl}/companies/${id}/visibility`,
+      { isVisible },
+      { headers }
+    );
   }
 
   getUserById(id: string): Observable<any> {

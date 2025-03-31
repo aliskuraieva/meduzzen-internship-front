@@ -10,10 +10,9 @@ import { PaginationResponse } from '../../../../core/interfaces/user.interface';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss']
+  styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent implements OnInit {
-
   users: User[] = [];
   errorMessage: string = '';
   totalUsers: number = 0;
@@ -43,9 +42,9 @@ export class UserListComponent implements OnInit {
         this.totalPages = Math.ceil(this.totalUsers / this.pageSize);
       },
       error: (error) => {
-        this.errorMessage = 'Error fetching users data. Please try again later.';
-        console.error('Error fetching users data:', error);
-      }
+        this.errorMessage =
+          'Error fetching users data. Please try again later.';
+      },
     });
   }
 

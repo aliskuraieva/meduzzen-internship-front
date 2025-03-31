@@ -1,5 +1,5 @@
 <div class="profile-wrapper">
-  <button (click)="goBack()" class="back-button">← Back</button>
+  <button (click)="goBack()" class="go-back-button">← Back</button>
 
   <div *ngIf="!isEditing" class="profile-container">
     <div *ngIf="user?.picture; else noAvatar">

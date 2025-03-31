@@ -15,9 +15,10 @@ export interface Auth0User {
 
 export interface UserData {
   id?: string | number;
-  name: string;
+  name?: string;
   email: string;
   picture?: string;
+  detail?: User;
 }
 
 export interface UsersDetail {

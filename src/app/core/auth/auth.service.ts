@@ -81,7 +81,6 @@ export class AuthService {
 
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
-    console.log('Attempting refresh, refreshToken:', refreshToken);
     if (!refreshToken) {
       return of(null);
     }
@@ -89,7 +88,6 @@ export class AuthService {
       .post<any>(`${this.apiUrl}/auth/refresh-token`, { refreshToken })
       .pipe(
         tap((response) => {
-          console.log('Token refresh response:', response);
           if (response?.data?.accessToken) {
             this.saveTokens(
               response.data.accessToken,
@@ -107,7 +105,6 @@ export class AuthService {
 
   loadUserData(): void {
     const storedToken = this.getAccessToken();
-    console.log('loadUserData called, storedToken:', storedToken);
     if (storedToken) {
       this.loadUserFromApi(storedToken);
     } else {
@@ -125,12 +122,15 @@ export class AuthService {
           if (user) {
             this.userSubject.next(user);
             this.isAuthenticatedSubject.next(true);
+            this.setCurrentUser(user.detail as User);
           } else {
             this.isAuthenticatedSubject.next(false);
+            this.setCurrentUser(null);
           }
         }),
         catchError((error) => {
           this.isAuthenticatedSubject.next(false);
+          this.setCurrentUser(null);
           return this.handleApiError(error);
         })
       )
@@ -190,8 +190,10 @@ export class AuthService {
     if (user) {
       this.userSubject.next(user);
       this.isAuthenticatedSubject.next(true);
+      this.setCurrentUser(user.detail as User);
     } else {
       this.isAuthenticatedSubject.next(false);
+      this.setCurrentUser(null);
     }
   }
 

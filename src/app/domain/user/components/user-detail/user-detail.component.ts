@@ -48,14 +48,10 @@ export class UserDetailComponent implements OnInit {
             !userData.detail?.username ||
             !userData.detail?.email
           ) {
-            console.error('Invalid user data:', userData);
             return;
           }
 
           this.user = { ...userData.detail };
-        },
-        error: (error) => {
-          console.error('Error fetching user data:', error);
         },
       });
   }
